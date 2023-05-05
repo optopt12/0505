@@ -3,16 +3,11 @@ package com.example.chatbot.Fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.chatbot.Adapter.ImageDetailAdapter
 import com.example.chatbot.R
 import com.example.chatbot.databinding.ShopItemScrollBinding
-import com.example.chatbot.placesDetails.data
 
 
 class ImageDetailFragment : Fragment() {
@@ -51,24 +46,15 @@ class ImageDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
 
-        // 获取当前fragment所在的activity，并将其转换为AppCompatActivity类型
-        val activity = requireActivity() as AppCompatActivity
-        // 设置ActionBar的标题
-        activity.supportActionBar?.title = "图片详情"
-
-        // 设置ActionBar的返回按钮
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        activity.supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        val test = requireActivity().findViewById<ViewPager2>(R.id.shop_view_pager)
 
         val adapter = ImageDetailAdapter(receivedData!!)
         binding.apply {
-            viewPager.adapter = adapter
+            shopViewPager.adapter = adapter
 
-            viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL // 滑动方向
-            viewPager.registerOnPageChangeCallback(object :
+            shopViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL // 滑动方向
+            shopViewPager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -82,3 +68,16 @@ class ImageDetailFragment : Fragment() {
 
 }
 
+
+//TODO 全部有圖片載入的地方要加error image
+//Picasso.get()
+//.load(photoUrl)
+//.placeholder(R.drawable.your_frame_drawable)
+//.error(R.drawable.your_error_drawable)
+//.into(holder.binding.imgNested)
+
+//Glide.with(holder.itemView.context)
+//.load(photoUrl)
+//.placeholder(R.drawable.your_frame_drawable)
+//.error(R.drawable.your_error_drawable)
+//.into(holder.binding.imgNested)

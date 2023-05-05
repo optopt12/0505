@@ -34,7 +34,10 @@ class NestedImageAdapter(var photoList:MutableList<String>) :  //只需要MsgLis
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val size:Int=300
         val photoUrl = photoList[position]
+        holder.binding.imgNested.layoutParams.width = size
+        holder.binding.imgNested.layoutParams.height = size
         holder.binding.imgNested.setScaleType(ImageView.ScaleType.CENTER_CROP)
         Picasso.get().load(photoUrl).into(holder.binding.imgNested)
         holder.itemView.setOnClickListener {
