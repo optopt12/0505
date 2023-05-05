@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Adapter.RestaurantListAdapter
 import com.example.chatbot.BuildConfig
@@ -19,6 +20,8 @@ import com.example.chatbot.databinding.MapShopBinding
 import com.example.chatbot.placesDetails.PlacesDetails
 import com.example.chatbot.placesDetails.data
 import com.example.chatbot.placesSearch.PlacesSearch
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,13 +72,15 @@ class ThirdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         SearchShop()
-//        initcomment()
+        initcomment()
 
     }
 
     private fun initcomment() {
-        TODO("Not yet implemented")
-
+        binding.btnComment.setOnClickListener(){
+            requireActivity().view_pager.setCurrentItem(0)
+            requireActivity().tabLayout.getTabAt(0)?.select()
+        }
     }
 
     private fun initRv() {

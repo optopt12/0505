@@ -7,6 +7,7 @@ import com.example.chatbot.Adapter.ViewPagerAdapter
 import com.example.chatbot.R
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         view_pager.isUserInputEnabled = false
         val adapter = ViewPagerAdapter(supportFragmentManager,lifecycle)
         view_pager.adapter = adapter
-
         TabLayoutMediator(tabLayout,view_pager){tab,position->
             when(position){
                 0->{
