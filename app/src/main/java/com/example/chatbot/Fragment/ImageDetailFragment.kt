@@ -15,15 +15,19 @@ class ImageDetailFragment : Fragment() {
     private var _binding: ShopItemScrollBinding? = null
     private val binding get() = _binding!!
 
-    private var data: String? = null
+//    private var data: String? = null
+    private var data: MutableList<String>? = null
     private var receivedData: List<String>? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            data = it.getString("RDetailtoImage")
-            receivedData = listOf(data!!)!! // create a new list with data as its only element
+//            data = it.getString("RDetailtoImage")
+            data=it.getStringArrayList("RDetailtoImage")
+            Log.d("data", data.toString())
+//            receivedData = listOf(data!!)!! // create a new list with data as its only element
+            receivedData = data!!.toList()
             Log.d("receivedData", receivedData.toString())
         }
     }
@@ -47,7 +51,6 @@ class ImageDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val test = requireActivity().findViewById<ViewPager2>(R.id.shop_view_pager)
 
         val adapter = ImageDetailAdapter(receivedData!!)
         binding.apply {
