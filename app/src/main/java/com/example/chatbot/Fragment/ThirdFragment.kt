@@ -1,5 +1,6 @@
 package com.example.chatbot.Fragment
 
+import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,12 +17,17 @@ import com.example.chatbot.BuildConfig
 import com.example.chatbot.Method
 import com.example.chatbot.Network.Apiclient
 import com.example.chatbot.R
+import com.example.chatbot.databinding.FragmentFirstBinding
 import com.example.chatbot.databinding.MapShopBinding
 import com.example.chatbot.placesDetails.PlacesDetails
 import com.example.chatbot.placesDetails.data
 import com.example.chatbot.placesSearch.PlacesSearch
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_first.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +37,8 @@ class ThirdFragment : Fragment() {
     //binding
     private var _binding: MapShopBinding? = null
     private val binding get() = _binding!!
+    private var _binding2: FragmentFirstBinding? = null
+    private val binding2 get() = _binding2!!
     //adapter
     private lateinit var RAdapter: RestaurantListAdapter
     //Rv
@@ -78,11 +86,12 @@ class ThirdFragment : Fragment() {
 
     private fun initcomment() {
         binding.btnComment.setOnClickListener(){
+            val message = ""
+            sendMessage(message)
             requireActivity().view_pager.setCurrentItem(0)
             requireActivity().tabLayout.getTabAt(0)?.select()
         }
     }
-
     private fun initRv() {
         binding.rv.apply {
             RAdapter = RestaurantListAdapter(msglist)//建立适配器实例
@@ -179,7 +188,6 @@ class ThirdFragment : Fragment() {
                  var user_language: String = ""
                  var profile_photo_url: String = ""
                  var text: String = ""
-
                     DetailphotorefArray.clear()
                     photoList.clear()
 
