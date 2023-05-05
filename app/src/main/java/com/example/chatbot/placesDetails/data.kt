@@ -15,7 +15,6 @@ data class data(
     val formatted_phone_number: String,
     val author_name: String,
     val language: String,
-    val rating: Int,
     val text: String,
     val profile_photo_url: String
 ) : Parcelable

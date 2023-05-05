@@ -174,7 +174,6 @@ class ThirdFragment : Fragment() {
                  var user_language: String = ""
                  var profile_photo_url: String = ""
                  var text: String = ""
-                 var rating: Int = 0
 
                     DetailphotorefArray.clear()
                     photoList.clear()
@@ -189,7 +188,6 @@ class ThirdFragment : Fragment() {
                         res.result.reviews.forEach{ Review ->
                             author_name = Review.author_name
                             user_language = Review.language
-                            rating = Review.rating
                             text = Review.text
                             profile_photo_url = Review.profile_photo_url
                         }
@@ -205,7 +203,7 @@ class ThirdFragment : Fragment() {
                             "&key=" + BuildConfig.GOOGLE_API_KEY
                     photoList.add(Detailimage)
                 }
-                rv(image,photoList,author_name,user_language,profile_photo_url,text,rating)
+                rv(image,photoList,author_name,user_language,profile_photo_url,text)
                 Log.d("DetailimagephotoList", "photoList: $photoList\n")
             }
 
@@ -223,8 +221,7 @@ class ThirdFragment : Fragment() {
                    author_name:String,
                    user_language:String,
                    profile_photo_url:String,
-                   text:String,
-                   rating:Int
+                   text:String
     ){
         msglist.add(data(
             photoList = photoList,
@@ -234,7 +231,6 @@ class ThirdFragment : Fragment() {
             image = image,
             author_name = author_name,
             language = user_language,
-            rating = rating,
             text = text,
             profile_photo_url = profile_photo_url
             ))
