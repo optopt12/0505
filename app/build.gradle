@@ -1,0 +1,105 @@
+plugins {
+    id("com.android.application")
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id "androidx.navigation.safeargs.kotlin"
+}
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
+android {
+    compileSdkVersion 33
+    buildFeatures {
+        viewBinding true
+    }
+    defaultConfig {
+        applicationId "com.example.Chatbot"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+
+        manifestPlaceholders = [ GOOGLE_API_KEY: localProperties['GOOGLE_API_KEY']]
+        buildConfigField "String", "GOOGLE_API_KEY", localProperties['GOOGLE_API_KEY']
+        buildConfigField "String", "CHAT_GPT_KEY", localProperties['CHAT_GPT_KEY']
+        buildConfigField "String", "food_KEY", localProperties['food_KEY']
+        buildConfigField "String", "food_ID", localProperties['food_ID']
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+}
+
+dependencies {
+    implementation 'com.google.maps.android:places-ktx:2.0.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation("io.coil-kt:coil:2.2.2")
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    // 用於攔截API
+    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+    // Google Map
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation 'com.google.maps.android:android-maps-utils:2.4.0'
+    implementation 'com.google.maps.android:maps-utils-ktx:3.4.0'
+    implementation 'com.google.maps.android:maps-ktx:3.2.1'
+
+    // Kotlin
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+
+    // Feature module Support
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.5.3")
+
+    // Testing Navigation
+    androidTestImplementation("androidx.navigation:navigation-testing:2.5.3")
+
+    // Jetpack Compose Integration
+    implementation("androidx.navigation:navigation-compose:2.4.0-alpha08")
+
+    //輕量級圖片載入庫
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.alexvasilkov:gesture-views:2.8.3'
+
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+
+    // Navigation
+//    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+//    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+
+
+
+}
