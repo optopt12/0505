@@ -82,6 +82,7 @@ class RestaurantDetailFragment : Fragment() {
         }
         binding.DetailrvH.apply {
             NAdapter = NestedImageAdapter(photolist)//建立适配器实例
+            Log.d("photolist", photolist.toString())
 //            NAdapter = NestedImageAdapter(Detailmsglist)//建立适配器实例
             layoutManager = LinearLayoutManager(
                 requireContext(),
@@ -95,7 +96,8 @@ class RestaurantDetailFragment : Fragment() {
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 
                 val b = Bundle()
-                b.putString("RDetailtoImage", data)
+//                b.putString("RDetailtoImage", data)
+                b.putStringArrayList("RDetailtoImage", ArrayList(data))
 
 
 
