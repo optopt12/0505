@@ -73,6 +73,7 @@ class OpenAIFragment : Fragment() {
         textToSpeech() //文字轉語音
         comment()
     }
+
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             val message = editText.text.toString()
@@ -128,6 +129,9 @@ class OpenAIFragment : Fragment() {
         }
 
     }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val spokenText: String = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
