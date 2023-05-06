@@ -159,26 +159,26 @@ class OpenAIFragment : Fragment() {
         }
     }
 
-    private fun comment() {
-        _binding2?.btnComment?.setOnClickListener{
-            val fragment = ThirdFragment()
-            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
-                override fun onCallback(data: data) {
-                        comment = data.text
-                        shopname = data.name
-                        val message = "以下是" + shopname +
-                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
-                        sendMessage(message)
-                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
-                        Log.d("message", "message: $message\n")
-                }
-            })
-            arguments?.let {
-                receivedData = it.getParcelable("ThirdtoRdetail")
-
-            }
-        }
-    }
+//    private fun comment() {
+//        _binding2?.btnComment?.setOnClickListener{
+//            val fragment = ThirdFragment()
+//            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
+//                override fun onCallback(data: data) {
+//                        comment = data.text
+//                        shopname = data.name
+//                        val message = "以下是" + shopname +
+//                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+//                        sendMessage(message)
+//                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
+//                        Log.d("message", "message: $message\n")
+//                }
+//            })
+//            arguments?.let {
+//                receivedData = it.getParcelable("ThirdtoRdetail")
+//
+//            }
+//        }
+//    }
 
     private fun initRv() {
         binding.recyclerView.apply {
