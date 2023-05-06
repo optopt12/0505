@@ -54,6 +54,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private lateinit var name: String
     private lateinit var phonenumber: String
     private lateinit var address: String
+    //callback
+    private var mCallback: CallbackListener? = null
 
     companion object {
         private const val TAG = "ThirdFragment"
@@ -118,6 +120,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 b.putParcelable("GPT", data)
                 val fragment = OpenAIFragment()
                 fragment.arguments = b
+                mCallback?.onCallback(data)
                 requireActivity().view_pager.setCurrentItem(0)
                 requireActivity().tabLayout.getTabAt(0)?.select()
             }
@@ -192,12 +195,14 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 var Detailphotoref: String = " "
                 var Detailimage: String = " "
                 //Google places search 評論
-                var author_name: MutableList<String> = ArrayList()
-                var user_language: MutableList<String> = ArrayList()
-                var profile_photo_url: MutableList<String> = ArrayList()
-                var text: MutableList<String> = ArrayList()
-                DetailphotorefArray.clear()
-                photoList.clear()
+
+                 var author_name: MutableList<String> = ArrayList()
+                 var user_language: MutableList<String> = ArrayList()
+                 var profile_photo_url: MutableList<String> = ArrayList()
+                 var text: MutableList<String> = ArrayList()
+
+                    DetailphotorefArray.clear()
+                    photoList.clear()
 
                 response.body()?.let { res ->
                     address = res.result.formatted_address ?: ""
@@ -235,29 +240,32 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
             }
         })
     }
-
-    private fun rv(
-        image: String,
-        photoList: MutableList<String> = ArrayList(),
-        author_name: MutableList<String> = ArrayList(),
-        user_language: MutableList<String> = ArrayList(),
-        profile_photo_url: MutableList<String> = ArrayList(),
-        text: MutableList<String> = ArrayList()
-    ) {
-        msglist.add(
-            data(
-                photoList = photoList,
-                formatted_address = address,
-                name = name,
-                formatted_phone_number = phonenumber,
-                image = image,
-                author_name = author_name,
-                language = user_language,
-                text = text,
-                profile_photo_url = profile_photo_url
-            )
-        )
+    private fun rv(image: String,
+                   photoList: MutableList<String> =ArrayList(),
+                   author_name:MutableList<String> =ArrayList(),
+                   user_language:MutableList<String> =ArrayList(),
+                   profile_photo_url:MutableList<String> =ArrayList(),
+                   text:MutableList<String> =ArrayList()){
+        msglist.add(data(
+            photoList = photoList,
+            formatted_address = address,
+            name = name,
+            formatted_phone_number = phonenumber,
+            image = image,
+            author_name = author_name,
+            language = user_language,
+            text = text,
+            profile_photo_url = profile_photo_url
+            ))
         RAdapter.notifyDataSetChanged()
+    }
+    fun setCallbackListener(listener: CallbackListener) {
+        mCallback = listener
+    }
+    interface CallbackListener {
+        fun onCallback(data: data){
+
+        }
     }
 }
 
