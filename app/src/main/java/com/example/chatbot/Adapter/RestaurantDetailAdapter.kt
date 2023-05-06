@@ -12,9 +12,10 @@ import com.example.chatbot.databinding.ShopDetailBinding
 import com.example.chatbot.databinding.ShopDetailItemBinding
 import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.data
+import com.example.chatbot.placesDetails.detaildata
 import com.squareup.picasso.Picasso
 
-class RestaurantDetailAdapter(var DetailMsgList: MutableList<data>) :
+class RestaurantDetailAdapter(var DetailMsgList: MutableList<detaildata>) :
     RecyclerView.Adapter<RestaurantDetailAdapter.ItemViewHolder>() {
     /**
      * 設定資料
@@ -30,7 +31,6 @@ class RestaurantDetailAdapter(var DetailMsgList: MutableList<data>) :
         val data = DetailMsgList[position]
         holder.binding.authorName.text = data.author_name
         holder.binding.text.text = data.text
-        holder.binding.language.text = data.language
         Picasso.get().load(data.profile_photo_url).into(holder.binding.imageView)
     }
     override fun getItemCount(): Int = DetailMsgList.size

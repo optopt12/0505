@@ -1,6 +1,5 @@
 package com.example.chatbot.Fragment
 
-import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.ViewPager2
 import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Adapter.RestaurantListAdapter
 import com.example.chatbot.BuildConfig
@@ -19,15 +17,11 @@ import com.example.chatbot.Network.Apiclient
 import com.example.chatbot.R
 import com.example.chatbot.databinding.FragmentFirstBinding
 import com.example.chatbot.databinding.MapShopBinding
+import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.PlacesDetails
 import com.example.chatbot.placesDetails.data
 import com.example.chatbot.placesSearch.PlacesSearch
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,8 +31,9 @@ class ThirdFragment : Fragment() {
     //binding
     private var _binding: MapShopBinding? = null
     private val binding get() = _binding!!
-    private var _binding2: FragmentFirstBinding? = null
-    private val binding2 get() = _binding2!!
+    private var binding2: FragmentFirstBinding? = null
+    private var _commit: ShopItemBinding? = null
+    private val commit get() = _commit!!
     //adapter
     private lateinit var RAdapter: RestaurantListAdapter
     //Rv
@@ -80,18 +75,9 @@ class ThirdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         SearchShop()
-        initcomment()
 
     }
 
-    private fun initcomment() {
-        binding.btnComment.setOnClickListener(){
-            val message = ""
-            sendMessage(message)
-            requireActivity().view_pager.setCurrentItem(0)
-            requireActivity().tabLayout.getTabAt(0)?.select()
-        }
-    }
     private fun initRv() {
         binding.rv.apply {
             RAdapter = RestaurantListAdapter(msglist)//建立适配器实例
@@ -181,13 +167,14 @@ class ThirdFragment : Fragment() {
             ) {
                  var photoList : MutableList<String> = ArrayList()
                  var DetailphotorefArray: MutableList<String>  = ArrayList()
-                 var Detailphotoref: String = ""
-                 var Detailimage: String = ""
+                 var Detailphotoref: String = " "
+                 var Detailimage: String = " "
                 //Google places search 評論
-                 var author_name: String = ""
-                 var user_language: String = ""
-                 var profile_photo_url: String = ""
-                 var text: String = ""
+                 var author_name: MutableList<String> = ArrayList()
+                 var user_language: MutableList<String> = ArrayList()
+                 var profile_photo_url: MutableList<String> = ArrayList()
+                 var text: MutableList<String> = ArrayList()
+
                     DetailphotorefArray.clear()
                     photoList.clear()
 
@@ -199,10 +186,10 @@ class ThirdFragment : Fragment() {
                                 DetailphotorefArray.add(photo.photo_reference)
                         }
                         res.result.reviews.forEach{ Review ->
-                            author_name = Review.author_name
-                            user_language = Review.language
-                            text = Review.text
-                            profile_photo_url = Review.profile_photo_url
+                            author_name.add(Review.author_name)
+                            user_language.add(Review.language)
+                            text.add(Review.text)
+                            profile_photo_url.add(Review.profile_photo_url)
                         }
                     }
 
@@ -231,10 +218,10 @@ class ThirdFragment : Fragment() {
     }
     private fun rv(image: String,
                    photoList: MutableList<String> =ArrayList(),
-                   author_name:String,
-                   user_language:String,
-                   profile_photo_url:String,
-                   text:String
+                   author_name:MutableList<String> =ArrayList(),
+                   user_language:MutableList<String> =ArrayList(),
+                   profile_photo_url:MutableList<String> =ArrayList(),
+                   text:MutableList<String> =ArrayList()
     ){
         msglist.add(data(
             photoList = photoList,

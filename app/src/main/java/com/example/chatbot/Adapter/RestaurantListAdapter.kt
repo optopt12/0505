@@ -17,6 +17,7 @@ import com.example.chatbot.R
 import com.example.chatbot.databinding.*
 import com.example.chatbot.placesDetails.data
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_main.*
 
 class RestaurantListAdapter(var MsgList: MutableList<data>) :
     RecyclerView.Adapter<RestaurantListAdapter.ItemViewHolder>() {
@@ -46,7 +47,11 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         holder.binding.imageView.setOnClickListener()
         {
             onClick.invoke(data)
-
+        }
+        holder.binding.btnComment.setOnClickListener()
+        {
+            activity.view_pager.setCurrentItem(0)
+            requireActivity().tabLayout.getTabAt(0)?.select()
         }
         val layoutManager = LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 //        holder.binding.rv.layoutManager = layoutManager

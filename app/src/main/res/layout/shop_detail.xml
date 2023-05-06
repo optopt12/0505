@@ -15,18 +15,21 @@
             android:layout_height="150dp"
             android:orientation="horizontal"
             android:layout_gravity="center"
+            android:background="@color/quantum_amber50"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/Detailrv_s"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/quantum_amber50"/>
 
         <FrameLayout
             android:id="@+id/container_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/quantum_amber50"
 />
 
 </LinearLayout>
