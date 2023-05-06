@@ -192,12 +192,14 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 var Detailphotoref: String = " "
                 var Detailimage: String = " "
                 //Google places search 評論
-                var author_name: MutableList<String> = ArrayList()
-                var user_language: MutableList<String> = ArrayList()
-                var profile_photo_url: MutableList<String> = ArrayList()
-                var text: MutableList<String> = ArrayList()
-                DetailphotorefArray.clear()
-                photoList.clear()
+
+                 var author_name: MutableList<String> = ArrayList()
+                 var user_language: MutableList<String> = ArrayList()
+                 var profile_photo_url: MutableList<String> = ArrayList()
+                 var text: MutableList<String> = ArrayList()
+
+                    DetailphotorefArray.clear()
+                    photoList.clear()
 
                 response.body()?.let { res ->
                     address = res.result.formatted_address ?: ""
