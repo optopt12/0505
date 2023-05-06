@@ -35,7 +35,6 @@ class RestaurantDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        Detailmsglist.clear()
         arguments?.let {
             receivedData = it.getParcelable("ThirdtoRdetail")
             photolist = receivedData!!.photoList
@@ -47,7 +46,6 @@ class RestaurantDetailFragment : Fragment() {
                 profile_photo_url = receivedData!!.profile_photo_url[i]
                 Detailmsglist.add(detaildata(author_name,language,text,profile_photo_url))
             }
-
         }
     }
 
@@ -97,7 +95,6 @@ class RestaurantDetailFragment : Fragment() {
             NAdapter.onClick = { data,position ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-
                 val b = Bundle()
 //                b.putString("RDetailtoImage", data)
                 b.putStringArrayList("RDetailtoImage", ArrayList(data))
