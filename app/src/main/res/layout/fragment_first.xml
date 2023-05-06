@@ -42,6 +42,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:layout_marginRight="1dp"
                 android:background="@drawable/button_corner_shape_white"
                 app:srcCompat="@android:drawable/ic_lock_silent_mode_off" />
 
@@ -50,6 +51,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:layout_marginRight="1dp"
                 android:background="@drawable/button_corner_shape_white"
                 app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
