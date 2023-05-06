@@ -27,7 +27,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class ThirdFragment : Fragment() {
+class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickListener {
     //binding
     private var _binding: MapShopBinding? = null
     private val binding get() = _binding!!
@@ -35,17 +35,21 @@ class ThirdFragment : Fragment() {
     private val binding2 get() = _binding2!!
     private var _commit: ShopItemBinding? = null
     private val commit get() = _commit!!
+
     //adapter
     private lateinit var RAdapter: RestaurantListAdapter
+
     //Rv
     private var msglist: MutableList<data> = ArrayList()//建立可改變的list
+
     //Google places search
-    private var photorefArray: MutableList<String>  = ArrayList()
+    private var photorefArray: MutableList<String> = ArrayList()
     private var placeidArray: MutableList<String> = ArrayList()
     private var nestedDataList: MutableList<NestedData> = ArrayList()
     private lateinit var placeid: String
     private lateinit var image: String
     private lateinit var photoref: String
+
     //Google Detail search
     private lateinit var name: String
     private lateinit var phonenumber: String
@@ -81,9 +85,18 @@ class ThirdFragment : Fragment() {
         SearchShop()
     }
 
+    //...
+    override fun onCommentButtonClick(data: data) {
+        val targetFragment = OpenAIFragment.newInstance(data.name)
+
+        requireActivity().view_pager.setCurrentItem(0)
+        requireActivity().tabLayout.getTabAt(0)?.select()
+    }
+
     private fun initRv() {
         binding.rv.apply {
             RAdapter = RestaurantListAdapter(msglist)//建立适配器实例
+            RAdapter.onCommentButtonClickListener=this@ThirdFragment
             layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -113,6 +126,7 @@ class ThirdFragment : Fragment() {
             }
         }
     }
+
     private fun SearchShop() {
         val search = binding.editText.text.toString()
         binding.button.setOnClickListener() //TODO DetailSearch只在這裡做一次，photolist不會有變化
@@ -130,17 +144,16 @@ class ThirdFragment : Fragment() {
                     response: Response<PlacesSearch>
                 ) {
                     response.body()?.let { res ->
-                            res.results.forEach { result ->
-                                placeid = result.place_id
-                                name = result.name
-                                placeidArray.add(placeid)
-                                result.photos.forEach { photo ->
-                                    photorefArray.add(photo.photo_reference)
-                                }
+                        res.results.forEach { result ->
+                            placeid = result.place_id
+                            name = result.name
+                            placeidArray.add(placeid)
+                            result.photos.forEach { photo ->
+                                photorefArray.add(photo.photo_reference)
                             }
+                        }
                     }
-                    for(i in 0 .. photorefArray.size - 1)
-                    {
+                    for (i in 0..photorefArray.size - 1) {
                         photoref = photorefArray[i]
                         image = "https://maps.googleapis.com/maps/api/place/photo" +
                                 "?maxwidth=4000" +
@@ -149,13 +162,13 @@ class ThirdFragment : Fragment() {
                                 "&key=" + BuildConfig.GOOGLE_API_KEY
                         nestedDataList.add(NestedData(image))
                     }
-                    for(i in 0 .. placeidArray.size - 1)
-                    {
+                    for (i in 0..placeidArray.size - 1) {
                         placeid = placeidArray[i]
                         image = nestedDataList[i].imageUrl
                         DetailSearch(placeid, image)
                     }
                 }
+
                 override fun onFailure(
                     call: Call<PlacesSearch>,
                     t: Throwable
@@ -166,7 +179,8 @@ class ThirdFragment : Fragment() {
             })
         }
     }
-    private fun DetailSearch(placeid :String,image:String){
+
+    private fun DetailSearch(placeid: String, image: String) {
         Apiclient.googlePlaces.getPlaceDetails(
             placeID = placeid,
             language = "zh-TW",
@@ -176,11 +190,12 @@ class ThirdFragment : Fragment() {
                 call: Call<PlacesDetails>,
                 response: Response<PlacesDetails>
             ) {
-                 var photoList : MutableList<String> = ArrayList()
-                 var DetailphotorefArray: MutableList<String>  = ArrayList()
-                 var Detailphotoref: String = " "
-                 var Detailimage: String = " "
+                var photoList: MutableList<String> = ArrayList()
+                var DetailphotorefArray: MutableList<String> = ArrayList()
+                var Detailphotoref: String = " "
+                var Detailimage: String = " "
                 //Google places search 評論
+
                  var author_name: MutableList<String> = ArrayList()
                  var user_language: MutableList<String> = ArrayList()
                  var profile_photo_url: MutableList<String> = ArrayList()
@@ -189,32 +204,31 @@ class ThirdFragment : Fragment() {
                     DetailphotorefArray.clear()
                     photoList.clear()
 
-                    response.body()?.let { res ->
-                        address= res.result.formatted_address ?: ""
-                        name = res.result.name ?: ""
-                        phonenumber = res.result.formatted_phone_number ?: ""
-                        res.result.photos.forEach{ photo ->
-                                DetailphotorefArray.add(photo.photo_reference)
-                        }
-                        res.result.reviews.forEach{ Review ->
-                            author_name.add(Review.author_name)
-                            user_language.add(Review.language)
-                            text.add(Review.text)
-                            profile_photo_url.add(Review.profile_photo_url)
-                        }
+                response.body()?.let { res ->
+                    address = res.result.formatted_address ?: ""
+                    name = res.result.name ?: ""
+                    phonenumber = res.result.formatted_phone_number ?: ""
+                    res.result.photos.forEach { photo ->
+                        DetailphotorefArray.add(photo.photo_reference)
                     }
+                    res.result.reviews.forEach { Review ->
+                        author_name.add(Review.author_name)
+                        user_language.add(Review.language)
+                        text.add(Review.text)
+                        profile_photo_url.add(Review.profile_photo_url)
+                    }
+                }
 
-                for(i in 0 .. DetailphotorefArray.size - 1)
-                {
+                for (i in 0..DetailphotorefArray.size - 1) {
                     Detailphotoref = DetailphotorefArray[i]
-                    Detailimage ="https://maps.googleapis.com/maps/api/place/photo" +
+                    Detailimage = "https://maps.googleapis.com/maps/api/place/photo" +
                             "?maxwidth=4000" +
                             "&maxheight=4000" +
                             "&photo_reference=" + Detailphotoref +
                             "&key=" + BuildConfig.GOOGLE_API_KEY
                     photoList.add(Detailimage)
                 }
-                rv(image,photoList,author_name,user_language,profile_photo_url,text)
+                rv(image, photoList, author_name, user_language, profile_photo_url, text)
             }
 
             override fun onFailure(

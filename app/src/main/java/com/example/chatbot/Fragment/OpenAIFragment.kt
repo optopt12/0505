@@ -53,6 +53,17 @@ class OpenAIFragment : Fragment() {
 
     private val sendMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
     private val currentMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
+
+    companion object {
+        fun newInstance(dataName: String): OpenAIFragment {
+            val fragment = OpenAIFragment()
+            val bundle = Bundle()
+            bundle.putString("data_name", dataName)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,7 +82,8 @@ class OpenAIFragment : Fragment() {
         displaySpeechRecognizer()//語音辨識
         setListener()//發送訊息與ai對話
         textToSpeech() //文字轉語音
-        comment()
+//        comment()
+
     }
 
     private fun setListener() {
@@ -130,6 +142,14 @@ class OpenAIFragment : Fragment() {
 
     }
 
+    override fun setArguments(args: Bundle?) {
+        super.setArguments(args)
+        arguments?.let {
+            val dataName = it.getString("data_name")
+            // 根據需要進行相應的操作
+            Log.d("datanamemaybe",dataName.toString())
+        }
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

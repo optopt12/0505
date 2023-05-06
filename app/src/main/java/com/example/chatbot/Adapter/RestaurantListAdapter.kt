@@ -25,7 +25,7 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
      * 設定資料
      */
 
-
+    var onCommentButtonClickListener: OnCommentButtonClickListener? = null
     inner class ItemViewHolder(val binding: ShopItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     var onClick: ((data) -> Unit) = {}
@@ -53,7 +53,7 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
 
         holder.binding.btnComment.setOnClickListener()
         {
-            onCommentClick.invoke(data)
+            onCommentButtonClickListener?.onCommentButtonClick(data)
         }
         val layoutManager = LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 //        holder.binding.rv.layoutManager = layoutManager
@@ -63,6 +63,10 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
     }
 
     override fun getItemCount(): Int = MsgList.size
+
+    interface OnCommentButtonClickListener {
+        fun onCommentButtonClick(data: data)
+    }
 }
 // TODO:Activity transition
 
