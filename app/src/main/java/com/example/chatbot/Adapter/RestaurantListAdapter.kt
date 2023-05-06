@@ -24,6 +24,8 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
     /**
      * 設定資料
      */
+
+
     inner class ItemViewHolder(val binding: ShopItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     var onClick: ((data) -> Unit) = {}
@@ -48,11 +50,14 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         {
             onClick.invoke(data)
         }
-        holder.binding.btnComment.setOnClickListener()
-        {
-            activity.view_pager.setCurrentItem(0)
-            requireActivity().tabLayout.getTabAt(0)?.select()
-        }
+
+
+//        holder.binding.btnComment.setOnClickListener()
+//        {
+//            requireActivity.view_pager.setCurrentItem(0)
+//            requireActivity().tabLayout.getTabAt(0)?.select()
+//        }
+
         val layoutManager = LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 //        holder.binding.rv.layoutManager = layoutManager
 //        val nestedAdapter = NestedImageAdapter(data.photoList)
@@ -61,6 +66,8 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
     }
 
     override fun getItemCount(): Int = MsgList.size
+
 }
+
 // TODO:Activity transition
 

@@ -30,8 +30,6 @@ class ImageDetailAdapter(private val imagesList: List<String>) : RecyclerView.Ad
         Glide.with(holder.itemView)
             .load(imagesList[position])
             .into(holder.binding.img)
-
-
 //        Picasso.get().load(images[position]).into(holder.imageView)
 
 

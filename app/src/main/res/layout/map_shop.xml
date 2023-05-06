@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.MainActivity">
+    tools:context=".Activity.MainActivity"
+    android:background="@drawable/background">
 
 
 
@@ -36,7 +37,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:layout_weight="1"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/button_corner_shape_gray_edtext"
         android:hint="在這裡搜尋"
         android:maxLines="1"
         app:layout_constraintStart_toStartOf="parent"
