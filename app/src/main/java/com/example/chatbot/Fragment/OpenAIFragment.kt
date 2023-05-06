@@ -26,8 +26,11 @@ import com.example.chatbot.Adapter.MsgAdapter
 import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Method
 import com.example.chatbot.OpenAI.Msg
+import com.example.chatbot.databinding.MapShopBinding
+import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.data
 import com.example.chatbot.placesDetails.detaildata
+import kotlinx.android.synthetic.main.shop_item.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,6 +40,7 @@ private const val SPEECH_REQUEST_CODE = 0
 class OpenAIFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentFirstBinding? = null
+    private var _binding2: ShopItemBinding? = null
 
     private lateinit var msgAdapter: MsgAdapter
 
@@ -76,14 +80,23 @@ class OpenAIFragment : Fragment() {
         }
     }
     private fun comment() {
-        arguments?.let {
-            receivedData = it.getParcelable("GPT")
-            comment = receivedData!!.text
-            shopname = receivedData!!.name
-            val message = "以下是" + shopname +
-                    "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內"
-            sendMessage(message)
-            Log.e("message", "message: $message\n")
+        _binding2?.btnComment?.setOnClickListener{
+            val fragment = ThirdFragment()
+            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
+                override fun onCallback(data: data) {
+                        comment = data.text
+                        shopname = data.name
+                        val message = "以下是" + shopname +
+                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+                        sendMessage(message)
+                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
+                        Log.d("message", "message: $message\n")
+                }
+            })
+            arguments?.let {
+                receivedData = it.getParcelable("ThirdtoRdetail")
+
+            }
         }
     }
     private fun initRv() {

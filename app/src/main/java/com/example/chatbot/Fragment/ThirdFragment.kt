@@ -50,6 +50,8 @@ class ThirdFragment : Fragment() {
     private lateinit var name: String
     private lateinit var phonenumber: String
     private lateinit var address: String
+    //callback
+    private var mCallback: CallbackListener? = null
 
     companion object {
         private const val TAG = "ThirdFragment"
@@ -103,6 +105,7 @@ class ThirdFragment : Fragment() {
                 b.putParcelable("GPT", data)
                 val fragment = OpenAIFragment()
                 fragment.arguments = b
+                mCallback?.onCallback(data)
                 requireActivity().view_pager.setCurrentItem(0)
                 requireActivity().tabLayout.getTabAt(0)?.select()
             }
@@ -180,6 +183,7 @@ class ThirdFragment : Fragment() {
                  var user_language: MutableList<String> = ArrayList()
                  var profile_photo_url: MutableList<String> = ArrayList()
                  var text: MutableList<String> = ArrayList()
+
                     DetailphotorefArray.clear()
                     photoList.clear()
 
@@ -225,8 +229,7 @@ class ThirdFragment : Fragment() {
                    author_name:MutableList<String> =ArrayList(),
                    user_language:MutableList<String> =ArrayList(),
                    profile_photo_url:MutableList<String> =ArrayList(),
-                   text:MutableList<String> =ArrayList()
-    ){
+                   text:MutableList<String> =ArrayList()){
         msglist.add(data(
             photoList = photoList,
             formatted_address = address,
@@ -239,6 +242,14 @@ class ThirdFragment : Fragment() {
             profile_photo_url = profile_photo_url
             ))
         RAdapter.notifyDataSetChanged()
+    }
+    fun setCallbackListener(listener: CallbackListener) {
+        mCallback = listener
+    }
+    interface CallbackListener {
+        fun onCallback(data: data){
+
+        }
     }
 }
 
