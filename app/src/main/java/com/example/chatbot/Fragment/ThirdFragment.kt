@@ -85,7 +85,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
 
     //...
     override fun onCommentButtonClick(data: data) {
-        val targetFragment = OpenAIFragment.newInstance(data.name)
+        val targetFragment = OpenAIFragment.newInstance(dataName = data.name, datatext = data.text)
 
         requireActivity().view_pager.setCurrentItem(0)
         requireActivity().tabLayout.getTabAt(0)?.select()
@@ -94,7 +94,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private fun initRv() {
         binding.rv.apply {
             RAdapter = RestaurantListAdapter(msglist)//建立适配器实例
-            RAdapter.onCommentButtonClickListener=this@ThirdFragment
+            RAdapter.onCommentButtonClickListener = this@ThirdFragment
             layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -113,14 +113,14 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 fragmentTransaction.addToBackStack(fragment.javaClass.name)
                 fragmentTransaction.commit()
             }
-            RAdapter.onCommentClick = { data ->
-                val b = Bundle()
-                b.putParcelable("GPT", data)
-                val fragment = OpenAIFragment()
-                fragment.arguments = b
-                requireActivity().view_pager.setCurrentItem(0)
-                requireActivity().tabLayout.getTabAt(0)?.select()
-            }
+//            RAdapter.onCommentClick = { data ->
+//                val b = Bundle()
+//                b.putParcelable("GPT", data)
+//                val fragment = OpenAIFragment()
+//                fragment.arguments = b
+//                requireActivity().view_pager.setCurrentItem(0)
+//                requireActivity().tabLayout.getTabAt(0)?.select()
+//            }
         }
     }
 
