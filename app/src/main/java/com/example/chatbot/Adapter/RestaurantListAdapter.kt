@@ -24,7 +24,10 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
     /**
      * 設定資料
      */
+
+
     inner class ItemViewHolder(val binding: ShopItemBinding) : RecyclerView.ViewHolder(binding.root)
+
     var onClick: ((data) -> Unit) = {}
     var onCommentClick: ((data) -> Unit) = {}
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -37,6 +40,8 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
 
 //        holder.binding.imageView.setScaleType(ImageView.ScaleType.FIT_XY)
         holder.binding.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP)
+
+
         holder.binding.Address.text = data.formatted_address
         holder.binding.Shopname.text = data.name
         holder.binding.PhoneNumber.text = data.formatted_phone_number

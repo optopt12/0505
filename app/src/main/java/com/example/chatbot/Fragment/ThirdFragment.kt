@@ -58,6 +58,7 @@ class ThirdFragment : Fragment() {
         private const val DEFAULT_LONGITUDE = 121.53453374432904
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -87,6 +88,7 @@ class ThirdFragment : Fragment() {
                 false
             )  //布局为线性垂直
             adapter = RAdapter
+
             RAdapter.onClick = { data ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
