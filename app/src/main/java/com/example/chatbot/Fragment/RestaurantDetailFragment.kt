@@ -91,13 +91,14 @@ class RestaurantDetailFragment : Fragment() {
             )  //布局为线性垂直
             adapter = NAdapter
             NAdapter.notifyDataSetChanged()
-            NAdapter.onClick = { data ->
+            NAdapter.onClick = { data,position ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 
                 val b = Bundle()
 //                b.putString("RDetailtoImage", data)
                 b.putStringArrayList("RDetailtoImage", ArrayList(data))
+                b.putInt("position",position)
 
 
 

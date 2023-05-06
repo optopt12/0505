@@ -20,10 +20,9 @@ class NestedImageAdapter(var photoList:MutableList<String>) :  //只需要MsgLis
     inner class ItemViewHolder(val binding: ShopItemNestedBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-//        var onClick: ((data, Int) -> Unit) = { _, _ -> }
-    var onClick: ((MutableList<String>) -> Unit) = {}
+    var onClick: ((MutableList<String>, Int) -> Unit) = { _, _ -> }
+//    var onClick: ((MutableList<String>) -> Unit) = {}
 
-//    var onClick: ((String) -> Unit)? = null
 
 
 
@@ -41,11 +40,13 @@ class NestedImageAdapter(var photoList:MutableList<String>) :  //只需要MsgLis
         holder.binding.imgNested.setScaleType(ImageView.ScaleType.CENTER_CROP)
         Picasso.get().load(photoUrl).into(holder.binding.imgNested)
         holder.itemView.setOnClickListener {
-            onClick?.invoke(photoList)
+            onClick?.invoke(photoList,position)
+            Log.d("position", "$position")
+
         }
 
 
-        Log.d("position", "$position")
+//        Log.d("position", "$position")
         Log.d("photosize", "${photoList.size}")
 
 //
