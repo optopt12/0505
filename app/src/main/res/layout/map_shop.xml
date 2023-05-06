@@ -42,20 +42,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="5dp"
-        android:background="@color/quantum_grey200"
-        android:text="搜尋"
-        android:textColor="#42D363"
-        app:layout_constraintStart_toEndOf="@id/editText"
-        app:layout_constraintTop_toTopOf="@id/editText"
-
-        />
-
+<!--    <Button-->
+<!--        android:id="@+id/button"-->
+<!--        style="@style/Widget.AppCompat.Button.Borderless.Colored"-->
+<!--        android:layout_width="60dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginStart="5dp"-->
+<!--        android:background="@color/quantum_grey200"-->
+<!--        android:text="搜尋"-->
+<!--        android:textColor="#42D363"-->
+<!--        app:layout_constraintStart_toEndOf="@id/editText"-->
+<!--        app:layout_constraintTop_toTopOf="@id/editText"-->
+<!--        />-->
+        <Button
+            android:id="@+id/button"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/button_shape"
+            android:text="搜尋"
+            android:textColor="#42D363"
+            app:layout_constraintStart_toEndOf="@id/editText"
+            app:layout_constraintTop_toTopOf="@id/editText"
+            />
     <Button
         android:id="@+id/btn_comment"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"

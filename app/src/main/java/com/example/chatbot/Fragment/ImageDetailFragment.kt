@@ -15,7 +15,6 @@ class ImageDetailFragment : Fragment() {
     private var _binding: ShopItemScrollBinding? = null
     private val binding get() = _binding!!
 
-//    private var data: String? = null
     private var data: MutableList<String>? = null
     private var receivedData: List<String>? = null
 
@@ -23,12 +22,9 @@ class ImageDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-//            data = it.getString("RDetailtoImage")
             data=it.getStringArrayList("RDetailtoImage")
-            Log.d("data", data.toString())
-//            receivedData = listOf(data!!)!! // create a new list with data as its only element
             receivedData = data!!.toList()
-            Log.d("receivedData", receivedData.toString())
+            Log.d("imagedetail_receivedData", receivedData.toString())
         }
     }
 
@@ -50,20 +46,14 @@ class ImageDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val position = arguments?.getInt("position")  // 獲取當前位置，如果為空則設置為0
 
 
         val adapter = ImageDetailAdapter(receivedData!!)
         binding.apply {
             shopViewPager.adapter = adapter
-
             shopViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL // 滑动方向
-            shopViewPager.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    // 页面变化回调
-                }
-            })
+            shopViewPager.setCurrentItem(position!!,false) //將當前位置設置為ViewPager的當前選中項目，並取消動畫
         }
 
     }
