@@ -31,7 +31,8 @@ class ThirdFragment : Fragment() {
     //binding
     private var _binding: MapShopBinding? = null
     private val binding get() = _binding!!
-    private var binding2: FragmentFirstBinding? = null
+    private var _binding2: FragmentFirstBinding? = null
+    private val binding2 get() = _binding2!!
     private var _commit: ShopItemBinding? = null
     private val commit get() = _commit!!
     //adapter
@@ -76,7 +77,6 @@ class ThirdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         SearchShop()
-
     }
 
     private fun initRv() {
@@ -92,15 +92,21 @@ class ThirdFragment : Fragment() {
             RAdapter.onClick = { data ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-
                 val b = Bundle()
                 b.putParcelable("ThirdtoRdetail", data)
-
                 val fragment = RestaurantDetailFragment()
                 fragment.arguments = b
                 fragmentTransaction.add(R.id.container, fragment, fragment.javaClass.name)
                 fragmentTransaction.addToBackStack(fragment.javaClass.name)
                 fragmentTransaction.commit()
+            }
+            RAdapter.onCommentClick = { data ->
+                val b = Bundle()
+                b.putParcelable("GPT", data)
+                val fragment = OpenAIFragment()
+                fragment.arguments = b
+                requireActivity().view_pager.setCurrentItem(0)
+                requireActivity().tabLayout.getTabAt(0)?.select()
             }
         }
     }
@@ -176,7 +182,6 @@ class ThirdFragment : Fragment() {
                  var user_language: MutableList<String> = ArrayList()
                  var profile_photo_url: MutableList<String> = ArrayList()
                  var text: MutableList<String> = ArrayList()
-
                     DetailphotorefArray.clear()
                     photoList.clear()
 
@@ -206,7 +211,6 @@ class ThirdFragment : Fragment() {
                     photoList.add(Detailimage)
                 }
                 rv(image,photoList,author_name,user_language,profile_photo_url,text)
-                Log.d("DetailimagephotoList", "photoList: $photoList\n")
             }
 
             override fun onFailure(

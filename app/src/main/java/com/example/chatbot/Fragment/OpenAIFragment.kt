@@ -23,24 +23,29 @@ import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
 import android.widget.Toast
 import com.example.chatbot.Adapter.MsgAdapter
+import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Method
 import com.example.chatbot.OpenAI.Msg
+import com.example.chatbot.placesDetails.data
+import com.example.chatbot.placesDetails.detaildata
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
-
-private val binding get() = _binding!!
-private var _binding: FragmentFirstBinding? = null
-private lateinit var msgAdapter: MsgAdapter
 private const val SPEECH_REQUEST_CODE = 0
-private var answer: String = "發送訊息以獲得回覆"
-private var msgList: MutableList<Msg> = ArrayList()//建立可改變的list
-private var tts: TextToSpeech? = null
-
 class OpenAIFragment : Fragment() {
+    private val binding get() = _binding!!
+    private var _binding: FragmentFirstBinding? = null
 
+    private lateinit var msgAdapter: MsgAdapter
+
+    private var answer: String = "發送訊息以獲得回覆"
+    private var msgList: MutableList<Msg> = ArrayList()//建立可改變的list
+    private var tts: TextToSpeech? = null
+    private var receivedData: data? = null
+    private var comment: MutableList<String> = ArrayList()
+    private var shopname : String = " "
 
     private val sendMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
     private val currentMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
@@ -52,27 +57,35 @@ class OpenAIFragment : Fragment() {
         // Inflate the layout for this fragment
         return binding.root
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null;
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         displaySpeechRecognizer()//語音辨識
         setListener()//發送訊息與ai對話
         textToSpeech() //文字轉語音
+        comment()
     }
-
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             val message = editText.text.toString()
             sendMessage(message)
         }
     }
-
+    private fun comment() {
+        arguments?.let {
+            receivedData = it.getParcelable("GPT")
+            comment = receivedData!!.text
+            shopname = receivedData!!.name
+            val message = "以下是" + shopname +
+                    "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內"
+            sendMessage(message)
+            Log.e("message", "message: $message\n")
+        }
+    }
     private fun initRv() {
         binding.recyclerView.apply {
             msgAdapter = MsgAdapter(msgList)   //建立适配器实例
@@ -89,7 +102,6 @@ class OpenAIFragment : Fragment() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }//打完字自動把鍵盤收起來
-
     private fun displaySpeechRecognizer() {
         voice_button.setOnClickListener {
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -103,11 +115,9 @@ class OpenAIFragment : Fragment() {
         }
 
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val spokenText: String =
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
+            val spokenText: String = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
                     results[0]
                 }.toString()
             binding.editText.setText(spokenText)
@@ -115,7 +125,6 @@ class OpenAIFragment : Fragment() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
     private fun textToSpeech() {
 
         tts = TextToSpeech(context, OnInitListener { status ->
@@ -143,14 +152,12 @@ class OpenAIFragment : Fragment() {
         }
         tts!!.shutdown()   //釋放資源?
     }
-
     private fun sendMessage(message: String) {
         binding.run {
             if (message.isNotEmpty()) {
                 editText.setText("")
                 // 定義要傳送的資料
-                val reqMessage =
-                    com.example.chatbot.OpenAI.Messages(role = "user", content = message)
+                val reqMessage = com.example.chatbot.OpenAI.Messages(role = "user", content = message)
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
                 // 加入到顯示用的資料列表
