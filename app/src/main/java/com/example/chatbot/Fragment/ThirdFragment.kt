@@ -1,5 +1,6 @@
 package com.example.chatbot.Fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -183,6 +184,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
             language = "zh-TW",
             key = BuildConfig.GOOGLE_API_KEY
         ).enqueue(object : Callback<PlacesDetails> {
+            @SuppressLint("SuspiciousIndentation")
             override fun onResponse(
                 call: Call<PlacesDetails>,
                 response: Response<PlacesDetails>
@@ -263,4 +265,3 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     }
 }
 
-//TODO rv image 統一圖片大小

@@ -60,10 +60,9 @@ class OpenAIFragment : Fragment() {
     private var dataText: ArrayList<String>? = null
 
 
-
     companion object {
         private var staticDataName: String? = null
-
+        private var staticDataText: MutableList<String>? = null
         fun newInstance(dataName: String, datatext: MutableList<String>): OpenAIFragment {
             val fragment = OpenAIFragment()
             val bundle = Bundle()
@@ -71,6 +70,7 @@ class OpenAIFragment : Fragment() {
             bundle.putStringArrayList("data_text", ArrayList(datatext))
 
             staticDataName = dataName
+            staticDataText = datatext
 
             fragment.arguments = bundle
             return fragment
@@ -83,13 +83,6 @@ class OpenAIFragment : Fragment() {
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-        savedInstanceState?.let {
-            dataName = it.getString("data_name")
-            dataText = it.getStringArrayList("data_text")
-            Log.d("datanamemaybe5", dataName.toString())
-
-        }
-        binding.editText.setText(dataName)
 
         // Inflate the layout for this fragment
         return binding.root
@@ -106,8 +99,6 @@ class OpenAIFragment : Fragment() {
         displaySpeechRecognizer()//語音辨識
         setListener()//發送訊息與ai對話
         textToSpeech() //文字轉語音
-        Log.d("datanamemaybe4", dataName.toString())
-
 
 
 //        comment()
@@ -115,47 +106,10 @@ class OpenAIFragment : Fragment() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        Log.d("onStart","onStart")
-        Log.d("datanamemaybe2", dataName.toString())
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("onPause","onPause")
-        Log.d("datanamemaybe2", dataName.toString())
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("onStop","onStop")
-        Log.d("datanamemaybe2", dataName.toString())
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("onDestroy","onDestroy")
-        Log.d("datanamemaybe2", dataName.toString())
-
-    }
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.let {
-            binding.editText.setText("data")
-            Log.d("datanamemaybe2", dataName.toString())
-
-        }
-    }
-
-
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             val message = editText.text.toString()
-            sendMessage(message)
+            sendMessage(message = message, showmessage = message)
         }
     }
 
@@ -218,26 +172,42 @@ class OpenAIFragment : Fragment() {
 
         arguments?.let {
             dataName = it.getString("data_name")
-            val datatext = it.getStringArrayList("data_text")
+            dataText = it.getStringArrayList("data_text")
             // 根據需要進行相應的操作
-            Log.d("datanamemaybe", dataName.toString())
-            Log.d("datatext", datatext.toString())
+            Log.d("dataName", dataName.toString())
+            Log.d("datatext", dataText.toString())
         }
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("onResume","onResume")
+        Log.d("onResume", "onResume")
         binding.editText.setText(staticDataName)
-        Log.d("datanamemaybe3", staticDataName.toString())
+        Log.d("staticDataName", staticDataName.toString())
+        Log.d("staticDataText", staticDataText.toString())
 
+
+        if (staticDataText != null) {
+
+            comment = staticDataText as MutableList<String>
+            shopname = staticDataName!!
+            val message = "以下是" + shopname +
+                    "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+
+            val show = "正在幫您分析${shopname}的評論，請稍等"
+            sendMessage(message = message, showmessage = show)
+
+
+        }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Log.d("datanamemaybe6", dataName.toString())
-
+    override fun onPause() {
+        super.onPause()
+        Log.d("onPause", "onPause")
+        staticDataName = null
+        staticDataText = null
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -286,17 +256,25 @@ class OpenAIFragment : Fragment() {
         tts!!.shutdown()   //釋放資源?
     }
 
-    private fun sendMessage(message: String) {
+    private fun sendMessage(message: String, showmessage: String) {
         binding.run {
             if (message.isNotEmpty()) {
+
+                progressBar.progress = 0
+                ll_progress.visibility = View.VISIBLE //讀取條跳出
+
                 editText.setText("")
                 // 定義要傳送的資料
                 val reqMessage =
                     com.example.chatbot.OpenAI.Messages(role = "user", content = message)
+
+                val ShowMessage =
+                    com.example.chatbot.OpenAI.Messages(role = "user", content = showmessage)
+
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
                 // 加入到顯示用的資料列表
-                currentMessages.add(reqMessage)
+                currentMessages.add(ShowMessage)
                 // 先刷新列表
                 msgAdapter.setterData(currentMessages)
                 recyclerView.scrollToPosition(currentMessages.size - 1)
@@ -318,6 +296,8 @@ class OpenAIFragment : Fragment() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     recyclerView.scrollToPosition(currentMessages.size - 1)
                                 }
+                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
+
                             }
                         }
 
@@ -330,6 +310,7 @@ class OpenAIFragment : Fragment() {
                         }
                     })
             }
+
         }
     }
 }
