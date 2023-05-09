@@ -1,5 +1,6 @@
 package com.example.chatbot.Fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -54,8 +55,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private lateinit var name: String
     private lateinit var phonenumber: String
     private lateinit var address: String
-    //callback
-    private var mCallback: CallbackListener? = null
 
     companion object {
         private const val TAG = "ThirdFragment"
@@ -87,7 +86,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
 
     //...
     override fun onCommentButtonClick(data: data) {
-        val targetFragment = OpenAIFragment.newInstance(data.name)
+        val targetFragment = OpenAIFragment.newInstance(dataName = data.name, datatext = data.text)
 
         requireActivity().view_pager.setCurrentItem(0)
         requireActivity().tabLayout.getTabAt(0)?.select()
@@ -96,7 +95,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private fun initRv() {
         binding.rv.apply {
             RAdapter = RestaurantListAdapter(msglist)//建立适配器实例
-            RAdapter.onCommentButtonClickListener=this@ThirdFragment
+            RAdapter.onCommentButtonClickListener = this@ThirdFragment
             layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -115,15 +114,14 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 fragmentTransaction.addToBackStack(fragment.javaClass.name)
                 fragmentTransaction.commit()
             }
-            RAdapter.onCommentClick = { data ->
-                val b = Bundle()
-                b.putParcelable("GPT", data)
-                val fragment = OpenAIFragment()
-                fragment.arguments = b
-                mCallback?.onCallback(data)
-                requireActivity().view_pager.setCurrentItem(0)
-                requireActivity().tabLayout.getTabAt(0)?.select()
-            }
+//            RAdapter.onCommentClick = { data ->
+//                val b = Bundle()
+//                b.putParcelable("GPT", data)
+//                val fragment = OpenAIFragment()
+//                fragment.arguments = b
+//                requireActivity().view_pager.setCurrentItem(0)
+//                requireActivity().tabLayout.getTabAt(0)?.select()
+//            }
         }
     }
 
@@ -186,6 +184,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
             language = "zh-TW",
             key = BuildConfig.GOOGLE_API_KEY
         ).enqueue(object : Callback<PlacesDetails> {
+            @SuppressLint("SuspiciousIndentation")
             override fun onResponse(
                 call: Call<PlacesDetails>,
                 response: Response<PlacesDetails>
@@ -240,33 +239,29 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
             }
         })
     }
-    private fun rv(image: String,
-                   photoList: MutableList<String> =ArrayList(),
-                   author_name:MutableList<String> =ArrayList(),
-                   user_language:MutableList<String> =ArrayList(),
-                   profile_photo_url:MutableList<String> =ArrayList(),
-                   text:MutableList<String> =ArrayList()){
-        msglist.add(data(
-            photoList = photoList,
-            formatted_address = address,
-            name = name,
-            formatted_phone_number = phonenumber,
-            image = image,
-            author_name = author_name,
-            language = user_language,
-            text = text,
-            profile_photo_url = profile_photo_url
-            ))
-        RAdapter.notifyDataSetChanged()
-    }
-    fun setCallbackListener(listener: CallbackListener) {
-        mCallback = listener
-    }
-    interface CallbackListener {
-        fun onCallback(data: data){
 
-        }
+    private fun rv(
+        image: String,
+        photoList: MutableList<String> = ArrayList(),
+        author_name: MutableList<String> = ArrayList(),
+        user_language: MutableList<String> = ArrayList(),
+        profile_photo_url: MutableList<String> = ArrayList(),
+        text: MutableList<String> = ArrayList()
+    ) {
+        msglist.add(
+            data(
+                photoList = photoList,
+                formatted_address = address,
+                name = name,
+                formatted_phone_number = phonenumber,
+                image = image,
+                author_name = author_name,
+                language = user_language,
+                text = text,
+                profile_photo_url = profile_photo_url
+            )
+        )
+        RAdapter.notifyDataSetChanged()
     }
 }
 
-//TODO rv image 統一圖片大小

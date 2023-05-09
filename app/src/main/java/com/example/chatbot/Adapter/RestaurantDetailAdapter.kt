@@ -31,7 +31,10 @@ class RestaurantDetailAdapter(var DetailMsgList: MutableList<detaildata>) :
         val data = DetailMsgList[position]
         holder.binding.authorName.text = data.author_name
         holder.binding.text.text = data.text
-        Picasso.get().load(data.profile_photo_url).into(holder.binding.imageView)
+        Picasso.get()
+            .load(data.profile_photo_url)
+            .error(R.drawable.error_image)
+            .into(holder.binding.imageView)
     }
     override fun getItemCount(): Int = DetailMsgList.size
 }

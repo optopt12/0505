@@ -26,6 +26,7 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
      */
 
     var onCommentButtonClickListener: OnCommentButtonClickListener? = null
+
     inner class ItemViewHolder(val binding: ShopItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     var onClick: ((data) -> Unit) = {}
@@ -45,7 +46,10 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         holder.binding.Address.text = data.formatted_address
         holder.binding.Shopname.text = data.name
         holder.binding.PhoneNumber.text = data.formatted_phone_number
-        Picasso.get().load(data.image).into(holder.binding.imageView)
+        Picasso.get()
+            .load(data.image)
+            .error(R.drawable.error_image)
+            .into(holder.binding.imageView)
         holder.binding.imageView.setOnClickListener()
         {
             onClick.invoke(data)
@@ -55,7 +59,8 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         {
             onCommentButtonClickListener?.onCommentButtonClick(data)
         }
-        val layoutManager = LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+        val layoutManager =
+            LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 //        holder.binding.rv.layoutManager = layoutManager
 //        val nestedAdapter = NestedImageAdapter(data.photoList)
 //        holder.binding.rv.adapter = nestedAdapter

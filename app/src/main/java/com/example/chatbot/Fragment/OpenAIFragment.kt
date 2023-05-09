@@ -36,7 +36,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
+
 private const val SPEECH_REQUEST_CODE = 0
+
 class OpenAIFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentFirstBinding? = null
@@ -49,16 +51,27 @@ class OpenAIFragment : Fragment() {
     private var tts: TextToSpeech? = null
     private var receivedData: data? = null
     private var comment: MutableList<String> = ArrayList()
-    private var shopname : String = " "
+    private var shopname: String = " "
 
     private val sendMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
     private val currentMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
 
+    private var dataName: String? = null
+    private var dataText: ArrayList<String>? = null
+
+
     companion object {
-        fun newInstance(dataName: String): OpenAIFragment {
+        private var staticDataName: String? = null
+        private var staticDataText: MutableList<String>? = null
+        fun newInstance(dataName: String, datatext: MutableList<String>): OpenAIFragment {
             val fragment = OpenAIFragment()
             val bundle = Bundle()
             bundle.putString("data_name", dataName)
+            bundle.putStringArrayList("data_text", ArrayList(datatext))
+
+            staticDataName = dataName
+            staticDataText = datatext
+
             fragment.arguments = bundle
             return fragment
         }
@@ -69,49 +82,58 @@ class OpenAIFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+
+
         // Inflate the layout for this fragment
         return binding.root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null;
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         displaySpeechRecognizer()//語音辨識
         setListener()//發送訊息與ai對話
         textToSpeech() //文字轉語音
+
+
 //        comment()
 
     }
 
+
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             val message = editText.text.toString()
-            sendMessage(message)
+            sendMessage(message = message, showmessage = message)
         }
     }
-    private fun comment() {
-        _binding2?.btnComment?.setOnClickListener{
-            val fragment = ThirdFragment()
-            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
-                override fun onCallback(data: data) {
-                        comment = data.text
-                        shopname = data.name
-                        val message = "以下是" + shopname +
-                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
-                        sendMessage(message)
-                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
-                        Log.d("message", "message: $message\n")
-                }
-            })
-            arguments?.let {
-                receivedData = it.getParcelable("ThirdtoRdetail")
 
-            }
-        }
-    }
+//    private fun comment() {
+//        _binding2?.btnComment?.setOnClickListener{
+//            val fragment = ThirdFragment()
+//            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
+//                override fun onCallback(data: data) {
+//                        comment = data.text
+//                        shopname = data.name
+//                        val message = "以下是" + shopname +
+//                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+//                        sendMessage(message)
+//                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
+//                        Log.d("message", "message: $message\n")
+//                }
+//            })
+//            arguments?.let {
+//                receivedData = it.getParcelable("ThirdtoRdetail")
+//
+//            }
+//        }
+//    }
+
     private fun initRv() {
         binding.recyclerView.apply {
             msgAdapter = MsgAdapter(msgList)   //建立适配器实例
@@ -128,6 +150,7 @@ class OpenAIFragment : Fragment() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }//打完字自動把鍵盤收起來
+
     private fun displaySpeechRecognizer() {
         voice_button.setOnClickListener {
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -142,19 +165,61 @@ class OpenAIFragment : Fragment() {
 
     }
 
+
     override fun setArguments(args: Bundle?) {
         super.setArguments(args)
+        Log.d("setArguments", dataName.toString())
+
         arguments?.let {
-            val dataName = it.getString("data_name")
+            dataName = it.getString("data_name")
+            dataText = it.getStringArrayList("data_text")
             // 根據需要進行相應的操作
-            Log.d("datanamemaybe",dataName.toString())
+            Log.d("dataName", dataName.toString())
+            Log.d("datatext", dataText.toString())
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("onResume", "onResume")
+        binding.editText.setText(staticDataName)
+        Log.d("staticDataName", staticDataName.toString())
+        Log.d("staticDataText", staticDataText.toString())
+
+
+        if (staticDataText != null) {
+
+            comment = staticDataText as MutableList<String>
+            shopname = staticDataName!!
+            val message = "以下是" + shopname +
+                    "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+
+            val show = "正在幫您分析${shopname}的評論，請稍等"
+            sendMessage(message = message, showmessage = show)
+
+
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("onPause", "onPause")
+        staticDataName = null
+        staticDataText = null
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("data_name", dataName)
+        outState.putStringArrayList("data_text", dataText)
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val spokenText: String = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
+            val spokenText: String =
+                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
                     results[0]
                 }.toString()
             binding.editText.setText(spokenText)
@@ -162,6 +227,7 @@ class OpenAIFragment : Fragment() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
     private fun textToSpeech() {
 
         tts = TextToSpeech(context, OnInitListener { status ->
@@ -189,16 +255,26 @@ class OpenAIFragment : Fragment() {
         }
         tts!!.shutdown()   //釋放資源?
     }
-    private fun sendMessage(message: String) {
+
+    private fun sendMessage(message: String, showmessage: String) {
         binding.run {
             if (message.isNotEmpty()) {
+
+                progressBar.progress = 0
+                ll_progress.visibility = View.VISIBLE //讀取條跳出
+
                 editText.setText("")
                 // 定義要傳送的資料
-                val reqMessage = com.example.chatbot.OpenAI.Messages(role = "user", content = message)
+                val reqMessage =
+                    com.example.chatbot.OpenAI.Messages(role = "user", content = message)
+
+                val ShowMessage =
+                    com.example.chatbot.OpenAI.Messages(role = "user", content = showmessage)
+
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
                 // 加入到顯示用的資料列表
-                currentMessages.add(reqMessage)
+                currentMessages.add(ShowMessage)
                 // 先刷新列表
                 msgAdapter.setterData(currentMessages)
                 recyclerView.scrollToPosition(currentMessages.size - 1)
@@ -220,6 +296,8 @@ class OpenAIFragment : Fragment() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     recyclerView.scrollToPosition(currentMessages.size - 1)
                                 }
+                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
+
                             }
                         }
 
@@ -232,6 +310,7 @@ class OpenAIFragment : Fragment() {
                         }
                     })
             }
+
         }
     }
 }
