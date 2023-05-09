@@ -57,7 +57,9 @@
         android:layout_weight="1"
         android:background="@drawable/button_corner_shape_gray_edtext"
         android:hint="在這裡搜尋"
-        android:maxLines="1"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,10 +67,10 @@
         android:id="@+id/btn"
         android:layout_width="60dp"
         android:layout_height="40dp"
+        android:layout_marginLeft="12dp"
         android:background="@drawable/button_corner_shape_gray_edtext"
         android:text="搜尋"
         android:textColor="#42D363"
-        android:layout_marginLeft="12dp"
         app:layout_constraintStart_toEndOf="@id/editText"
         app:layout_constraintTop_toTopOf="@id/editText" />
 
