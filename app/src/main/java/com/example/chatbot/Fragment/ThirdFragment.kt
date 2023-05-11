@@ -118,6 +118,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         var keyword = binding.editText.text.toString()
             binding.button.setOnClickListener()
             {
+                var keyword = binding.editText.text.toString()
                 if (keyword != "") {
                     if (binding.rv.childCount > 0) {//清除rv裡面的所有內容
                     msglist.clear()
@@ -127,8 +128,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                     binding.rv.removeAllViews()
                 }
                     binding.editText.hideKeyboard()
-
-                    var keyword = binding.editText.text.toString()
                 Apiclient.googlePlaces.getPlaceSearchWithKeyword(
                     location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
                     radius = 500,
