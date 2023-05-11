@@ -115,7 +115,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     }
 
     private fun SearchShop() {
-        var keyword = binding.editText.text.toString()
             binding.button.setOnClickListener()
             {
                 var keyword = binding.editText.text.toString()
