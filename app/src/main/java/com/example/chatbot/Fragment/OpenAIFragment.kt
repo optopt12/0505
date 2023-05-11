@@ -116,7 +116,7 @@ class OpenAIFragment : Fragment() {
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             message = editText.text.toString()
-            errormessage  = "文本量超出上限，本次對話結束"
+
             sendMessage(message = message!!, showmessage = message!!,errormessage = errormessage!!)
         }
     }
