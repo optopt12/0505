@@ -113,7 +113,7 @@ class OpenAIFragment : Fragment() {
     private fun setListener() {
         binding.sendButton.setOnClickListener {
              message = editText.text.toString()
-            sendMessage(message = message!!, showmessage = message!!,isUser = true)
+            sendMessage(message = message!!, showmessage = message!!)
         }
     }
 
@@ -199,7 +199,7 @@ class OpenAIFragment : Fragment() {
                     "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
 
             val show = "正在幫您分析${shopname}的評論，請稍等"
-            sendMessage(message = message!!, showmessage = show,isUser = false)
+            sendMessage(message = message!!, showmessage = show)
 
 
         }
@@ -267,7 +267,7 @@ class OpenAIFragment : Fragment() {
         tts!!.shutdown()   //釋放資源?
     }
 
-    private fun sendMessage(message: String, showmessage: String, isUser: Boolean) { //isUser=true是使用者輸入的訊息,false是goole place輸入的訊息
+    private fun sendMessage(message: String, showmessage: String) {
         binding.run {
             if (message.isNotEmpty()) {
 
