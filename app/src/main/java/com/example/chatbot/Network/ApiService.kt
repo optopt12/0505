@@ -36,7 +36,7 @@ interface ApiService {
 
     @Headers("Accept-Encoding: identity")
     @GET("nearbysearch/json")
-    fun getPlaceSearchWithKeyword(
+    fun getPlaceSearch(
         @Query("location") location: String, // Ex: 25.0338,121.5646
         @Query("radius") radius: String = "1000", // Ex: 500 公尺
         @Query("keyword") keyword: String,
@@ -50,7 +50,7 @@ interface ApiService {
      */
     @Headers("Accept-Encoding: identity")
     @GET("nearbysearch/json")
-    fun getPlaceSearch(
+    fun getPlaceSearchWithKeyword(
         @Query("location") location: String, // Ex: 25.0338,121.5646
         @Query("radius") radius: Long = 1000L, // Ex: 1000 公尺
         @Query("key") key: String,

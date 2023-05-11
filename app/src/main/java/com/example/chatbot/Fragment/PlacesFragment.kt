@@ -118,7 +118,7 @@ class PlacesFragment : Fragment() {
     }
     private fun findNearSearch() {
         var keyword = binding.editText.text.toString()
-        Apiclient.googlePlaces.getPlaceSearch(
+        Apiclient.googlePlaces.getPlaceSearchWithKeyword(
             location = "${DEFAULT_LATITUDE},${DEFAULT_LONGITUDE}",
             radius = 500,
             keyword = keyword,

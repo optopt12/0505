@@ -33,9 +33,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private var _binding: MapShopBinding? = null
     private val binding get() = _binding!!
     private var _binding2: FragmentFirstBinding? = null
-    private val binding2 get() = _binding2!!
     private var _commit: ShopItemBinding? = null
-    private val commit get() = _commit!!
 
     //adapter
     private lateinit var RAdapter: RestaurantListAdapter
@@ -53,9 +51,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
 
     //Google Detail search
     private lateinit var name: String
-    private lateinit var phonenumber: String
-    private lateinit var address: String
-
     companion object {
         private const val TAG = "ThirdFragment"
         private const val DEFAULT_LATITUDE = 25.043871531367014
@@ -86,7 +81,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     //...
     override fun onCommentButtonClick(data: data) {
         val targetFragment = OpenAIFragment.newInstance(dataName = data.name, datatext = data.text)
-
         requireActivity().view_pager.setCurrentItem(0)
         requireActivity().tabLayout.getTabAt(0)?.select()
     }
@@ -99,7 +93,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
                 false
-            )  //布局为线性垂直
+            )
             adapter = RAdapter
 
             RAdapter.onClick = { data ->
@@ -113,14 +107,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 fragmentTransaction.addToBackStack(fragment.javaClass.name)
                 fragmentTransaction.commit()
             }
-//            RAdapter.onCommentClick = { data ->
-//                val b = Bundle()
-//                b.putParcelable("GPT", data)
-//                val fragment = OpenAIFragment()
-//                fragment.arguments = b
-//                requireActivity().view_pager.setCurrentItem(0)
-//                requireActivity().tabLayout.getTabAt(0)?.select()
-//            }
         }
     }
 
@@ -129,7 +115,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         binding.button.setOnClickListener()
         {
 
-            Apiclient.googlePlaces.getPlaceSearchWithKeyword(
+            Apiclient.googlePlaces.getPlaceSearch(
                 location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
                 radius = "500",
                 language = "zh-TW",
@@ -192,6 +178,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 var DetailphotorefArray: MutableList<String> = ArrayList()
                 var Detailphotoref: String = " "
                 var Detailimage: String = " "
+                var address :String = ""
+                var phonenumber :String = ""
                 //Google places search 評論
 
                  var author_name: MutableList<String> = ArrayList()
@@ -226,7 +214,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                             "&key=" + BuildConfig.GOOGLE_API_KEY
                     photoList.add(Detailimage)
                 }
-                rv(image, photoList, author_name, user_language, profile_photo_url, text)
+                rv(image, photoList, author_name, user_language, profile_photo_url,text,address,phonenumber)
+                Log.e("msglist", "${msglist.size}")
             }
 
             override fun onFailure(
@@ -245,7 +234,9 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         author_name: MutableList<String> = ArrayList(),
         user_language: MutableList<String> = ArrayList(),
         profile_photo_url: MutableList<String> = ArrayList(),
-        text: MutableList<String> = ArrayList()
+        text: MutableList<String> = ArrayList(),
+        address : String,
+        phonenumber : String
     ) {
         msglist.add(
             data(
