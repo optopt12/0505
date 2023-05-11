@@ -34,3 +34,7 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 }
+
+//todo icon還沒想好
+//todo 專題名稱還沒想好
+//todo app名稱還沒想好

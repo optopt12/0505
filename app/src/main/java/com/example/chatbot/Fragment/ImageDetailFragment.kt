@@ -62,15 +62,3 @@ class ImageDetailFragment : Fragment() {
 }
 
 
-//TODO 全部有圖片載入的地方要加error image
-//Picasso.get()
-//.load(photoUrl)
-//.placeholder(R.drawable.your_frame_drawable)
-//.error(R.drawable.your_error_drawable)
-//.into(holder.binding.imgNested)
-
-//Glide.with(holder.itemView.context)
-//.load(photoUrl)
-//.placeholder(R.drawable.your_frame_drawable)
-//.error(R.drawable.your_error_drawable)
-//.into(holder.binding.imgNested)

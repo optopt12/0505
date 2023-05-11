@@ -57,7 +57,7 @@ class OpenAIFragment : Fragment() {
     private var spokenText: String? = null
 
     private var message: String? = null
-    private var errormessage:String="文本量超出上限，本次對話結束"
+    private var errormessage: String = "文本量超出上限，本次對話結束"
 
     private var errorMessages: MutableList<String> = mutableListOf()
 
@@ -112,7 +112,12 @@ class OpenAIFragment : Fragment() {
         binding.sendButton.setOnClickListener {
             message = editText.text.toString()
 
-            sendMessage(message = message!!, showmessage = message!!,errormessage = errormessage!!)
+            sendMessage(
+                message = message!!,
+                showmessage = message!!,
+                errormessage = errormessage!!,
+                isUser = true
+            )
             editText.hideKeyboard()
         }
     }
@@ -149,7 +154,6 @@ class OpenAIFragment : Fragment() {
             adapter = msgAdapter
         }
     }
-
 
 
     private fun displaySpeechRecognizer() {
@@ -192,18 +196,24 @@ class OpenAIFragment : Fragment() {
 
             comment = staticDataText as MutableList<String>
             shopname = staticDataName!!
-             message = "以下是" + shopname +
+            message = "以下是" + shopname +
                     "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
 
             val show = "正在幫您分析${shopname}的評論，請稍等"
-            sendMessage(message = message!!, showmessage = show,errormessage = errormessage)
+            sendMessage(
+                message = message!!,
+                showmessage = show,
+                errormessage = errormessage,
+                isUser = false
+            )
 
 
         }
 
-        if(spokenText!=null){
+        if (spokenText != null) {
             binding.editText.setText(spokenText)
-            Log.d("spokenText", spokenText.toString())        }
+            Log.d("spokenText", spokenText.toString())
+        }
     }
 
     override fun onPause() {
@@ -264,14 +274,22 @@ class OpenAIFragment : Fragment() {
         tts!!.shutdown()   //釋放資源?
     }
 
-    private fun sendMessage(message: String, showmessage: String,errormessage: String) {
+    private fun sendMessage(
+        message: String,
+        showmessage: String,
+        errormessage: String,
+        isUser: Boolean
+    ) { //isUser=true代表是使用者輸入的訊息,isUser=false代表是從google輸入的訊息
         binding.run {
             if (message.isNotEmpty()) {
 
+                var input: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
+
+                if (!isUser) {
+                    sendMessages.clear()//清空傳送資料，能避免token爆掉，但是會導致無法記得之前的回覆
+                }
                 progressBar.progress = 0
                 ll_progress.visibility = View.VISIBLE //讀取條跳出
-
-//                sendMessages.clear()//清空傳送資料，能避免token爆掉，但是會導致無法記得之前的回覆
 
                 editText.setText("")
                 // 定義要傳送的資料
@@ -282,15 +300,22 @@ class OpenAIFragment : Fragment() {
 
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
-                Log.d("sendMessages", sendMessages.size.toString())
+                Log.d("sendMessages", sendMessages.toString())
                 // 加入到顯示用的資料列表
                 currentMessages.add(ShowMessage)
-                Log.d("currentMessages", currentMessages.size.toString())
+                Log.d("currentMessages", currentMessages.toString())
+
+                if (!isUser) {
+                    input = sendMessages
+                } else {
+                    input = currentMessages
+                }
+
                 // 先刷新列表
                 msgAdapter.setterData(currentMessages)
                 recyclerView.scrollToPosition(currentMessages.size - 1)
                 // 呼叫API
-                Apiclient.openAI.sendChatGPT(com.example.chatbot.OpenAI.ChatGPTReq(messages = sendMessages))
+                Apiclient.openAI.sendChatGPT(com.example.chatbot.OpenAI.ChatGPTReq(messages = input))
                     .enqueue(object :
                         Callback<com.example.chatbot.OpenAI.ChatGPTRes> {
                         override fun onResponse(
@@ -298,11 +323,13 @@ class OpenAIFragment : Fragment() {
                             response: Response<com.example.chatbot.OpenAI.ChatGPTRes>
                         ) {
 
-//                            if (!response.isSuccessful) { //如果回傳不成功，token爆掉了
-//                                Method.logE(TAG, "onResponse: error: ${response.code()}")
-//                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
-//                                return
-//                            }
+                            if (!response.isSuccessful) { //如果回傳不成功，token爆掉了
+
+                                Method.logE(TAG, "onResponse: error: ${response.code()}")
+                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
+                                Toast.makeText(context, errormessage, Toast.LENGTH_SHORT).show()
+                                return
+                            }
 
                             response.body()?.let { res ->
                                 // 先儲存回傳的資料
@@ -311,7 +338,10 @@ class OpenAIFragment : Fragment() {
                                 sendMessages.addAll(currentMessages)
                                 // 刷新列表
                                 msgAdapter.setterData(currentMessages)
-                                Log.d("currentMessages", currentMessages.lastOrNull()?.content ?: "")
+                                Log.d(
+                                    "currentMessagesLast",
+                                    currentMessages.lastOrNull()?.content ?: ""
+                                )
                                 CoroutineScope(Dispatchers.Main).launch {
                                     recyclerView.scrollToPosition(currentMessages.size - 1)
                                 }
@@ -324,16 +354,12 @@ class OpenAIFragment : Fragment() {
                             call: Call<com.example.chatbot.OpenAI.ChatGPTRes>,
                             t: Throwable
                         ) {
-                            errorMessages.add(errormessage)
-//                            sendMessages.addAll(errorMessages)
-                            msgAdapter.setterData(currentMessages)
+
                             t.printStackTrace()
                             Method.logE(TAG, "onFailure: ${t.message}")
                         }
                     })
-            }
-            else
-            {
+            } else {
                 Toast.makeText(requireContext(), "請輸入要對話的內容", Toast.LENGTH_SHORT).show()
             }
 
