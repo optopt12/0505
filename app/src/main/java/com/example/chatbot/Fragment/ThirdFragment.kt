@@ -114,6 +114,13 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private fun SearchShop() {
         binding.button.setOnClickListener()
         {
+            if(binding.rv.childCount > 0){//清除rv裡面的所有內容
+                msglist.clear()
+                nestedDataList.clear()
+                photorefArray.clear()
+                placeidArray.clear()
+                binding.rv.removeAllViews()
+            }
             var keyword = binding.editText.text.toString()
             Apiclient.googlePlaces.getPlaceSearchWithKeyword(
                 location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
@@ -238,7 +245,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         text: MutableList<String> = ArrayList(),
         address : String,
         phonenumber : String,
-        name:String
+        name : String
     ) {
         msglist.add(
             data(
