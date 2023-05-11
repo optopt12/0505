@@ -55,9 +55,16 @@ class OpenAIFragment : Fragment() {
 
     private val sendMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
     private val currentMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
-    private var errorMessages: MutableList<String> = mutableListOf()
+
     private var dataName: String? = null
     private var dataText: ArrayList<String>? = null
+
+    private var spokenText: String? = null
+
+    private var message: String? = null
+    private var errormessage:String="文本量超出上限，本次對話結束"
+
+    private var errorMessages: MutableList<String> = mutableListOf()
 
 
     companion object {
@@ -108,9 +115,9 @@ class OpenAIFragment : Fragment() {
 
     private fun setListener() {
         binding.sendButton.setOnClickListener {
-            val message = editText.text.toString()
-            val errormessage : String = "文本量超出上限，本次對話結束"
-            sendMessage(message = message, showmessage = message,errormessage = errormessage)
+            message = editText.text.toString()
+            errormessage  = "文本量超出上限，本次對話結束"
+            sendMessage(message = message!!, showmessage = message!!,errormessage = errormessage!!)
         }
     }
 
@@ -166,6 +173,7 @@ class OpenAIFragment : Fragment() {
 
     }
 
+
     override fun setArguments(args: Bundle?) {
         super.setArguments(args)
         Log.d("setArguments", dataName.toString())
@@ -191,14 +199,18 @@ class OpenAIFragment : Fragment() {
 
             comment = staticDataText as MutableList<String>
             shopname = staticDataName!!
-            val message = "以下是" + shopname +
+             message = "以下是" + shopname +
                     "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
-            val errormessage : String = "文本量超出上限，本次對話結束"
+
             val show = "正在幫您分析${shopname}的評論，請稍等"
-            sendMessage(message = message, showmessage = show,errormessage = errormessage)
+            sendMessage(message = message!!, showmessage = show,errormessage = errormessage)
 
 
         }
+
+        if(spokenText!=null){
+            binding.editText.setText(spokenText)
+            Log.d("spokenText", spokenText.toString())        }
     }
 
     override fun onPause() {
@@ -206,7 +218,10 @@ class OpenAIFragment : Fragment() {
         Log.d("onPause", "onPause")
         staticDataName = null
         staticDataText = null
+
+        spokenText = null
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -217,11 +232,12 @@ class OpenAIFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val spokenText: String =
+            spokenText =
                 data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { results ->
                     results[0]
                 }.toString()
-            binding.editText.setText(spokenText)
+//            binding.editText.setText(spokenText)
+//            Log.d("spokenText", spokenText.toString())
             // Do something with spokenText.
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -243,7 +259,7 @@ class OpenAIFragment : Fragment() {
             }
         })
         speech_button!!.setOnClickListener {
-            val data = answer
+            val data = currentMessages.lastOrNull()?.content ?: ""
             Log.i("TTS", "button clicked: $data")
             tts!!.setPitch(1F)    // 語調(1 為正常；0.5 為低一倍；2 為高一倍)
             tts!!.setSpeechRate(1F)    // 速度(1 為正常；0.5 為慢一倍；2 為快一倍)
@@ -262,6 +278,8 @@ class OpenAIFragment : Fragment() {
                 progressBar.progress = 0
                 ll_progress.visibility = View.VISIBLE //讀取條跳出
 
+//                sendMessages.clear()//清空傳送資料，能避免token爆掉，但是會導致無法記得之前的回覆
+
                 editText.setText("")
                 // 定義要傳送的資料
                 val reqMessage =
@@ -271,8 +289,10 @@ class OpenAIFragment : Fragment() {
 
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
+                Log.d("sendMessages", sendMessages.size.toString())
                 // 加入到顯示用的資料列表
                 currentMessages.add(ShowMessage)
+                Log.d("currentMessages", currentMessages.size.toString())
                 // 先刷新列表
                 msgAdapter.setterData(currentMessages)
                 recyclerView.scrollToPosition(currentMessages.size - 1)
@@ -284,6 +304,13 @@ class OpenAIFragment : Fragment() {
                             call: Call<com.example.chatbot.OpenAI.ChatGPTRes>,
                             response: Response<com.example.chatbot.OpenAI.ChatGPTRes>
                         ) {
+
+//                            if (!response.isSuccessful) { //如果回傳不成功，token爆掉了
+//                                Method.logE(TAG, "onResponse: error: ${response.code()}")
+//                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
+//                                return
+//                            }
+
                             response.body()?.let { res ->
                                 // 先儲存回傳的資料
                                 res.choices.forEach { currentMessages.add(it.message) }
@@ -291,6 +318,7 @@ class OpenAIFragment : Fragment() {
                                 sendMessages.addAll(currentMessages)
                                 // 刷新列表
                                 msgAdapter.setterData(currentMessages)
+                                Log.d("currentMessages", currentMessages.lastOrNull()?.content ?: "")
                                 CoroutineScope(Dispatchers.Main).launch {
                                     recyclerView.scrollToPosition(currentMessages.size - 1)
                                 }

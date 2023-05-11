@@ -58,6 +58,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
 
     companion object {
         private const val TAG = "ThirdFragment"
+//        private const val DEFAULT_ZOOM = 18F
         private const val DEFAULT_LATITUDE = 25.043871531367014
         private const val DEFAULT_LONGITUDE = 121.53453374432904
     }
@@ -263,3 +264,4 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         RAdapter.notifyDataSetChanged()
     }
 }
+
