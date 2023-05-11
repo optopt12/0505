@@ -2,7 +2,6 @@ package com.example.chatbot.Fragment
 
 import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatbot.databinding.FragmentFirstBinding
 import kotlinx.android.synthetic.main.fragment_first.*
@@ -24,6 +22,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.chatbot.Adapter.MsgAdapter
 import com.example.chatbot.Method
+import com.example.chatbot.Method.hideKeyboard
 import com.example.chatbot.OpenAI.Msg
 import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.data
@@ -114,6 +113,7 @@ class OpenAIFragment : Fragment() {
             message = editText.text.toString()
 
             sendMessage(message = message!!, showmessage = message!!,errormessage = errormessage!!)
+            editText.hideKeyboard()
         }
     }
 
@@ -149,6 +149,7 @@ class OpenAIFragment : Fragment() {
             adapter = msgAdapter
         }
     }
+
 
 
     private fun displaySpeechRecognizer() {
