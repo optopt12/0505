@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/icon2_round"
         android:label="QuickCritic"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon2_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test6">
         <!-- 若目標版本在 API 28 或以上需要額外設定 Apache -->
