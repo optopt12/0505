@@ -23,14 +23,10 @@ import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
 import android.widget.Toast
 import com.example.chatbot.Adapter.MsgAdapter
-import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Method
 import com.example.chatbot.OpenAI.Msg
-import com.example.chatbot.databinding.MapShopBinding
 import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.data
-import com.example.chatbot.placesDetails.detaildata
-import kotlinx.android.synthetic.main.shop_item.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -154,10 +150,6 @@ class OpenAIFragment : Fragment() {
         }
     }
 
-    fun View.hideKeyboard() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(windowToken, 0)
-    }//打完字自動把鍵盤收起來
 
     private fun displaySpeechRecognizer() {
         voice_button.setOnClickListener {
