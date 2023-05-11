@@ -1,5 +1,6 @@
 package com.example.chatbot.Adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,10 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         holder.binding.Address.text = data.formatted_address
         holder.binding.Shopname.text = data.name
         holder.binding.PhoneNumber.text = data.formatted_phone_number
+        Log.d("dataaddress", data.formatted_address)
+        Log.d("dataname", data.name)
+        Log.d("dataphonenumber", data.formatted_phone_number)
+
         Picasso.get()
             .load(data.image)
             .error(R.drawable.error_image)
@@ -73,5 +78,4 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         fun onCommentButtonClick(data: data)
     }
 }
-// TODO:Activity transition
 

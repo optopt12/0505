@@ -30,6 +30,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.chatbot.*
+import com.example.chatbot.Method.hideKeyboard
 import com.example.chatbot.databinding.ShopItemBinding
 import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.shop_item.*
@@ -119,6 +120,7 @@ class PlacesFragment : Fragment() {
             if (keyword != "")
             {
                 findNearSearch(keyword)
+                binding.editText.hideKeyboard()
             }
             else
             {
