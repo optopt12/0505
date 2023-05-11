@@ -331,6 +331,10 @@ class OpenAIFragment : Fragment() {
                         }
                     })
             }
+            else
+            {
+                Toast.makeText(requireContext(), "請輸入要對話的內容", Toast.LENGTH_SHORT).show()
+            }
 
         }
     }
