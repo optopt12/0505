@@ -167,7 +167,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                         t.printStackTrace()
                         Method.logE(TAG, "onFailure: ${t.message}")
                     }
-                }) }
+                })
+                }
                 else
                 {
                     Toast.makeText(requireContext(), "請輸入要查詢的資訊", Toast.LENGTH_SHORT).show()
