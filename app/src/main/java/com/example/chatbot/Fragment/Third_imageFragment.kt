@@ -14,7 +14,6 @@ private val binding get() = _binding!!
 
 private lateinit var photoUrl: String
 
-// TODO: use navigate instead of intent
 class Third_imageFragment : Fragment() {
 
     companion object {

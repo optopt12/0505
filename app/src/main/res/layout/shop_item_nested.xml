@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/black">
 
     <ImageView
         android:id="@+id/img_nested"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:scaleType="centerCrop"
-        />
-</LinearLayout>
+        tools:srcCompat="@tools:sample/avatars" />
+
+
+</FrameLayout>
+
+    <!--FrameLayout的margin決定圖與圖之間多寬-->
+    <!--Image的margin決定邊框多寬-->

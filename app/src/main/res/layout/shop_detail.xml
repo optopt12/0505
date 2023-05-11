@@ -4,29 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".Activity.MainActivity">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/Detailrv_h"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/Detailrv_h"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    <!--android:background="@color/quantum_amber50"-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/Detailrv_s"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/Detailrv_s"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
 
-        <FrameLayout
-            android:id="@+id/container_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-/>
+    <FrameLayout
+        android:id="@+id/container_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/quantum_amber50" />
 
 </LinearLayout>

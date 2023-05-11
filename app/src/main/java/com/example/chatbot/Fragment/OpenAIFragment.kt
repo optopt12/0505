@@ -23,32 +23,67 @@ import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
 import android.widget.Toast
 import com.example.chatbot.Adapter.MsgAdapter
+import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Method
 import com.example.chatbot.OpenAI.Msg
+import com.example.chatbot.databinding.MapShopBinding
+import com.example.chatbot.databinding.ShopItemBinding
+import com.example.chatbot.placesDetails.data
+import com.example.chatbot.placesDetails.detaildata
+import kotlinx.android.synthetic.main.shop_item.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-private val binding get() = _binding!!
-private var _binding: FragmentFirstBinding? = null
-private lateinit var msgAdapter: MsgAdapter
 private const val SPEECH_REQUEST_CODE = 0
-private var answer: String = "發送訊息以獲得回覆"
-private var msgList: MutableList<Msg> = ArrayList()//建立可改變的list
-private var tts: TextToSpeech? = null
 
 class OpenAIFragment : Fragment() {
+    private val binding get() = _binding!!
+    private var _binding: FragmentFirstBinding? = null
+    private var _binding2: ShopItemBinding? = null
 
+    private lateinit var msgAdapter: MsgAdapter
+
+    private var answer: String = "發送訊息以獲得回覆"
+    private var msgList: MutableList<Msg> = ArrayList()//建立可改變的list
+    private var tts: TextToSpeech? = null
+    private var receivedData: data? = null
+    private var comment: MutableList<String> = ArrayList()
+    private var shopname: String = " "
 
     private val sendMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
     private val currentMessages: MutableList<com.example.chatbot.OpenAI.Messages> = mutableListOf()
+    private var errorMessages: MutableList<String> = mutableListOf()
+    private var dataName: String? = null
+    private var dataText: ArrayList<String>? = null
+
+
+    companion object {
+        private var staticDataName: String? = null
+        private var staticDataText: MutableList<String>? = null
+        fun newInstance(dataName: String, datatext: MutableList<String>): OpenAIFragment {
+            val fragment = OpenAIFragment()
+            val bundle = Bundle()
+            bundle.putString("data_name", dataName)
+            bundle.putStringArrayList("data_text", ArrayList(datatext))
+
+            staticDataName = dataName
+            staticDataText = datatext
+
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+
+
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -64,14 +99,41 @@ class OpenAIFragment : Fragment() {
         displaySpeechRecognizer()//語音辨識
         setListener()//發送訊息與ai對話
         textToSpeech() //文字轉語音
+
+
+//        comment()
+
     }
+
 
     private fun setListener() {
         binding.sendButton.setOnClickListener {
             val message = editText.text.toString()
-            sendMessage(message)
+            val errormessage : String = "文本量超出上限，本次對話結束"
+            sendMessage(message = message, showmessage = message,errormessage = errormessage)
         }
     }
+
+//    private fun comment() {
+//        _binding2?.btnComment?.setOnClickListener{
+//            val fragment = ThirdFragment()
+//            fragment.setCallbackListener(object : ThirdFragment.CallbackListener{
+//                override fun onCallback(data: data) {
+//                        comment = data.text
+//                        shopname = data.name
+//                        val message = "以下是" + shopname +
+//                                "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+//                        sendMessage(message)
+//                        Toast.makeText(requireContext(), "發送成功", Toast.LENGTH_SHORT).show()
+//                        Log.d("message", "message: $message\n")
+//                }
+//            })
+//            arguments?.let {
+//                receivedData = it.getParcelable("ThirdtoRdetail")
+//
+//            }
+//        }
+//    }
 
     private fun initRv() {
         binding.recyclerView.apply {
@@ -103,6 +165,55 @@ class OpenAIFragment : Fragment() {
         }
 
     }
+
+    override fun setArguments(args: Bundle?) {
+        super.setArguments(args)
+        Log.d("setArguments", dataName.toString())
+
+        arguments?.let {
+            dataName = it.getString("data_name")
+            dataText = it.getStringArrayList("data_text")
+            // 根據需要進行相應的操作
+            Log.d("dataName", dataName.toString())
+            Log.d("datatext", dataText.toString())
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("onResume", "onResume")
+        binding.editText.setText(staticDataName)
+        Log.d("staticDataName", staticDataName.toString())
+        Log.d("staticDataText", staticDataText.toString())
+
+
+        if (staticDataText != null) {
+
+            comment = staticDataText as MutableList<String>
+            shopname = staticDataName!!
+            val message = "以下是" + shopname +
+                    "的評論 請幫我依照以下評論 做出評分 評分從1到10 並且回覆限制在50個字以內" + comment
+            val errormessage : String = "文本量超出上限，本次對話結束"
+            val show = "正在幫您分析${shopname}的評論，請稍等"
+            sendMessage(message = message, showmessage = show,errormessage = errormessage)
+
+
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("onPause", "onPause")
+        staticDataName = null
+        staticDataText = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("data_name", dataName)
+        outState.putStringArrayList("data_text", dataText)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -144,17 +255,24 @@ class OpenAIFragment : Fragment() {
         tts!!.shutdown()   //釋放資源?
     }
 
-    private fun sendMessage(message: String) {
+    private fun sendMessage(message: String, showmessage: String,errormessage: String) {
         binding.run {
             if (message.isNotEmpty()) {
+
+                progressBar.progress = 0
+                ll_progress.visibility = View.VISIBLE //讀取條跳出
+
                 editText.setText("")
                 // 定義要傳送的資料
                 val reqMessage =
                     com.example.chatbot.OpenAI.Messages(role = "user", content = message)
+                val ShowMessage =
+                    com.example.chatbot.OpenAI.Messages(role = "user", content = showmessage)
+
                 // 加入到傳送用的資料列表
                 sendMessages.add(reqMessage)
                 // 加入到顯示用的資料列表
-                currentMessages.add(reqMessage)
+                currentMessages.add(ShowMessage)
                 // 先刷新列表
                 msgAdapter.setterData(currentMessages)
                 recyclerView.scrollToPosition(currentMessages.size - 1)
@@ -176,6 +294,8 @@ class OpenAIFragment : Fragment() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     recyclerView.scrollToPosition(currentMessages.size - 1)
                                 }
+                                ll_progress.visibility = View.GONE //讀取完成，讀取條消失
+
                             }
                         }
 
@@ -183,11 +303,15 @@ class OpenAIFragment : Fragment() {
                             call: Call<com.example.chatbot.OpenAI.ChatGPTRes>,
                             t: Throwable
                         ) {
+                            errorMessages.add(errormessage)
+//                            sendMessages.addAll(errorMessages)
+                            msgAdapter.setterData(currentMessages)
                             t.printStackTrace()
                             Method.logE(TAG, "onFailure: ${t.message}")
                         }
                     })
             }
+
         }
     }
 }

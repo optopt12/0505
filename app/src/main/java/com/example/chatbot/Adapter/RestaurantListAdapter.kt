@@ -17,16 +17,20 @@ import com.example.chatbot.R
 import com.example.chatbot.databinding.*
 import com.example.chatbot.placesDetails.data
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_main.*
 
 class RestaurantListAdapter(var MsgList: MutableList<data>) :
     RecyclerView.Adapter<RestaurantListAdapter.ItemViewHolder>() {
     /**
      * 設定資料
      */
+
+    var onCommentButtonClickListener: OnCommentButtonClickListener? = null
+
     inner class ItemViewHolder(val binding: ShopItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     var onClick: ((data) -> Unit) = {}
-
+    var onCommentClick: ((data) -> Unit) = {}
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val View = ShopItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(View)
@@ -42,13 +46,21 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
         holder.binding.Address.text = data.formatted_address
         holder.binding.Shopname.text = data.name
         holder.binding.PhoneNumber.text = data.formatted_phone_number
-        Picasso.get().load(data.image).into(holder.binding.imageView)
+        Picasso.get()
+            .load(data.image)
+            .error(R.drawable.error_image)
+            .into(holder.binding.imageView)
         holder.binding.imageView.setOnClickListener()
         {
             onClick.invoke(data)
-
         }
-        val layoutManager = LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+
+        holder.binding.btnComment.setOnClickListener()
+        {
+            onCommentButtonClickListener?.onCommentButtonClick(data)
+        }
+        val layoutManager =
+            LinearLayoutManager(holder.binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 //        holder.binding.rv.layoutManager = layoutManager
 //        val nestedAdapter = NestedImageAdapter(data.photoList)
 //        holder.binding.rv.adapter = nestedAdapter
@@ -56,6 +68,10 @@ class RestaurantListAdapter(var MsgList: MutableList<data>) :
     }
 
     override fun getItemCount(): Int = MsgList.size
+
+    interface OnCommentButtonClickListener {
+        fun onCommentButtonClick(data: data)
+    }
 }
 // TODO:Activity transition
 

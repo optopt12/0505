@@ -15,6 +15,7 @@ import com.example.chatbot.Adapter.RestaurantDetailAdapter
 import com.example.chatbot.R
 import com.example.chatbot.databinding.ShopDetailBinding
 import com.example.chatbot.placesDetails.data
+import com.example.chatbot.placesDetails.detaildata
 
 
 class RestaurantDetailFragment : Fragment() {
@@ -24,27 +25,27 @@ class RestaurantDetailFragment : Fragment() {
     private lateinit var RAdapter: RestaurantDetailAdapter
     private lateinit var NAdapter: NestedImageAdapter
 
-    private var Detailmsglist: MutableList<data> = ArrayList()//建立可改變的list
+    private var Detailmsglist: MutableList<detaildata> = ArrayList()//建立可改變的list
     private var photolist: MutableList<String> = ArrayList()//建立可改變的list
-    companion object {
-        private const val TAG = "RestaurantDetailFragment"
-        private const val DEFAULT_ZOOM = 18F
-        private const val DEFAULT_LATITUDE = 25.043871531367014
-        private const val DEFAULT_LONGITUDE = 121.53453374432904
-    }
-
     private var receivedData: data? = null
-
-
+    private lateinit var author_name: String
+    private lateinit var language: String
+    private lateinit var text: String
+    private lateinit var profile_photo_url: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        Detailmsglist.clear()
         arguments?.let {
             receivedData = it.getParcelable("ThirdtoRdetail")
-            Detailmsglist.add(receivedData!!)
             photolist = receivedData!!.photoList
-
+            for(i in 0 .. receivedData!!.author_name.size - 1)
+            {
+                author_name = receivedData!!.author_name[i]
+                language = receivedData!!.language[i]
+                text = receivedData!!.text[i]
+                profile_photo_url = receivedData!!.profile_photo_url[i]
+                Detailmsglist.add(detaildata(author_name,language,text,profile_photo_url))
+            }
         }
     }
 
@@ -82,6 +83,7 @@ class RestaurantDetailFragment : Fragment() {
         }
         binding.DetailrvH.apply {
             NAdapter = NestedImageAdapter(photolist)//建立适配器实例
+            Log.d("photolist", photolist.toString())
 //            NAdapter = NestedImageAdapter(Detailmsglist)//建立适配器实例
             layoutManager = LinearLayoutManager(
                 requireContext(),
@@ -90,12 +92,13 @@ class RestaurantDetailFragment : Fragment() {
             )  //布局为线性垂直
             adapter = NAdapter
             NAdapter.notifyDataSetChanged()
-            NAdapter.onClick = { data ->
+            NAdapter.onClick = { data,position ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-
                 val b = Bundle()
-                b.putString("RDetailtoImage", data)
+//                b.putString("RDetailtoImage", data)
+                b.putStringArrayList("RDetailtoImage", ArrayList(data))
+                b.putInt("position",position)
 
 
 

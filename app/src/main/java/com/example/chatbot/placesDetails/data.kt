@@ -13,11 +13,10 @@ data class data(
     val formatted_address: String,
     val name: String,
     val formatted_phone_number: String,
-    val author_name: String,
-    val language: String,
-    val rating: Int,
-    val text: String,
-    val profile_photo_url: String
+    val author_name: MutableList<String>,
+    val language: MutableList<String>,
+    val text: MutableList<String>,
+    val profile_photo_url: MutableList<String>
 ) : Parcelable
 
 

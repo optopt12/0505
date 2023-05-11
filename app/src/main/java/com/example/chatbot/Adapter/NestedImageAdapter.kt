@@ -14,17 +14,14 @@ import com.example.chatbot.databinding.ShopItemNestedBinding
 import com.example.chatbot.placesDetails.data
 import com.squareup.picasso.Picasso
 
-class NestedImageAdapter(var photoList:MutableList<String>) :  //只需要MsgList的imgUrl
+class NestedImageAdapter(var photoList: MutableList<String>) :  //只需要MsgList的imgUrl
     RecyclerView.Adapter<NestedImageAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(val binding: ShopItemNestedBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-//        var onClick: ((data, Int) -> Unit) = { _, _ -> }
-//    var onClick: ((List<String>) -> Unit) = {}
-
-    var onClick: ((String) -> Unit)? = null
-
+    var onClick: ((MutableList<String>, Int) -> Unit) = { _, _ -> }
+//    var onClick: ((MutableList<String>) -> Unit) = {}
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -34,15 +31,23 @@ class NestedImageAdapter(var photoList:MutableList<String>) :  //只需要MsgLis
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val size: Int = 300
         val photoUrl = photoList[position]
+        holder.binding.imgNested.layoutParams.width = size
+        holder.binding.imgNested.layoutParams.height = size
         holder.binding.imgNested.setScaleType(ImageView.ScaleType.CENTER_CROP)
-        Picasso.get().load(photoUrl).into(holder.binding.imgNested)
+        Picasso.get()
+            .load(photoUrl)
+            .error(R.drawable.error_image)
+            .into(holder.binding.imgNested)
         holder.itemView.setOnClickListener {
-            onClick?.invoke(photoUrl)
+            onClick?.invoke(photoList, position)
+            Log.d("position", "$position")
+
         }
 
 
-        Log.d("position", "$position")
+//        Log.d("position", "$position")
         Log.d("photosize", "${photoList.size}")
 
 //

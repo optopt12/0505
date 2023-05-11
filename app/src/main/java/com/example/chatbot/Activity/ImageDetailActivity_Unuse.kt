@@ -39,7 +39,7 @@ class ImageDetailActivity_Unuse : AppCompatActivity() {
 
 
 
-        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        val viewPager: ViewPager2 = findViewById(R.id.shop_view_pager)
         val adapter = ImageDetailAdapter(images)
         viewPager.adapter = adapter
 

@@ -31,6 +31,8 @@ import retrofit2.Response
 import com.example.chatbot.*
 import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.PlacesDetails
+import kotlinx.android.synthetic.main.fragment_first.*
+import kotlinx.android.synthetic.main.fragment_second.editText
 import kotlinx.android.synthetic.main.shop_item.*
 
 
@@ -63,7 +65,7 @@ class PlacesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
         doInitialize()//初始化
-        SearchShop()
+        setListener()
     }
     private fun doInitialize() {
         // 初始化地圖
@@ -109,115 +111,67 @@ class PlacesFragment : Fragment() {
             true
         }
     }
-//    private fun findNearSearch() {
-//        Apiclient.googlePlaces.getPlaceSearch(
-//            location = "${ThirdFragment.DEFAULT_LATITUDE},${ThirdFragment.DEFAULT_LONGITUDE}",
-//            radius = "1000",
-//            token = "20",
-//            language = "zh-TW",
-//            keyword = search,
-//            key = BuildConfig.GOOGLE_API_KEY
-//        ).enqueue(object : Callback<PlacesSearch> {
-//            override fun onResponse(
-//                call: Call<PlacesSearch>,
-//                response: Response<PlacesSearch>
-//            ) {
-//                response.body()?.let { res ->
-//                    res.results.forEach { result ->
-//                        CoroutineScope(Dispatchers.Main).launch {
-//                            val markerOption = MarkerOptions().apply {
-//                                position(
-//                                    LatLng(
-//                                        result.geometry.location.lat,
-//                                        result.geometry.location.lng
-//                                    )
-//                                )//取得經緯度
-//                                title(result.name)//取得店家名稱
-//                                snippet("${result.place_id},${result.name},${result.photos[0].photo_reference}")
-//                            }
-//                            mMap.addMarker(markerOption)
-//                        }
-//                    }
-//                }
-//            }
-//            override fun onFailure(
-//                call: Call<PlacesSearch>,
-//                t: Throwable
-//            ) {
-//                t.printStackTrace()
-//                Method.logE(TAG, "onFailure: ${t.message}")
-//            }
-//        })
-//    }
-    private fun checkPermission(){
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(requireActivity()
-                , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            val strings = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            // 請求權限
-            ActivityCompat.requestPermissions(requireActivity(), strings, 1)
+    private fun setListener() {
+        binding.btn.setOnClickListener {
+            findNearSearch()
         }
     }
-    private fun SearchShop() {
-        val search = binding.editText.text.toString()
-
-        binding.btn.setOnClickListener()
-        {
-//                val manager = requireActivity().supportFragmentManager.beginTransaction()
-//                manager.add(R.id.map, ShopFragment())
-//                    .addToBackStack(null)//在map新增一個叫做ShopFragment的Fragment
-//                manager.hide(PlacesFragment())//把map原本的PlacesFragment hide
-//                manager.show(ShopFragment()).commit()
-            Apiclient.googlePlaces.getPlaceSearchWithKeyword(
-                location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
-                radius = 500L,
-                keyword = search,
-                key = BuildConfig.GOOGLE_API_KEY
-            ).enqueue(object : Callback<PlacesSearch> {
-                override fun onResponse(
-                    call: Call<PlacesSearch>,
-                    response: Response<PlacesSearch>
-                ) {
-                    response.body()?.let { res ->
-                        res.results.forEach { result ->
-                            placeid = result.place_id
-                        }
-                    }
-                    DetailSearch()
-                }
-                override fun onFailure(
-                    call: Call<PlacesSearch>,
-                    t: Throwable
-                ) {
-                    t.printStackTrace()
-                    Method.logE(TAG, "onFailure: ${t.message}")
-                }
-            })
-        }
-    }
-    private fun DetailSearch(){
-        Apiclient.googlePlaces.getPlaceDetails(
-            placeID = placeid,
+    private fun findNearSearch() {
+        var keyword = binding.editText.text.toString()
+        Apiclient.googlePlaces.getPlaceSearch(
+            location = "${DEFAULT_LATITUDE},${DEFAULT_LONGITUDE}",
+            radius = 500,
+            keyword = keyword,
             language = "zh-TW",
             key = BuildConfig.GOOGLE_API_KEY
-        ).enqueue(object : Callback<PlacesDetails> {
+        ).enqueue(object : Callback<PlacesSearch> {
             override fun onResponse(
-                call: Call<PlacesDetails>,
-                response: Response<PlacesDetails>
+                call: Call<PlacesSearch>,
+                response: Response<PlacesSearch>
             ) {
                 response.body()?.let { res ->
-
+                    res.results.forEach { result ->
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val markerOption = MarkerOptions().apply {
+                                position(
+                                    LatLng(
+                                        result.geometry.location.lat,
+                                        result.geometry.location.lng
+                                    )
+                                )//取得經緯度
+                                title(result.name)//取得店家名稱
+                                snippet("${result.place_id},${result.name},${result.photos[0].photo_reference}")
+                            }
+                            mMap.addMarker(markerOption)
+                        }
+                    }
                 }
             }
             override fun onFailure(
-                call: Call<PlacesDetails>,
+                call: Call<PlacesSearch>,
                 t: Throwable
             ) {
                 t.printStackTrace()
                 Method.logE(TAG, "onFailure: ${t.message}")
             }
         })
+    }
+    private fun checkPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val strings = arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            // 請求權限
+            ActivityCompat.requestPermissions(requireActivity(), strings, 1)
+        }
     }
 }
 

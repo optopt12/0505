@@ -33,21 +33,12 @@ interface ApiService {
     /**
      * Google Places Search
      */
-    @Headers("Accept-Encoding: identity")
-    @GET("nearbysearch/json")
-    fun getPlaceSearch(
-        @Query("location") location: String, // Ex: 25.0338,121.5646
-        @Query("radius") radius: String = "1000", // Ex: 1000 公尺
-        @Query("type") type: String = "restaurant",
-        @Query("key") key: String,
-        @Query("language") language: String = "zh-TW"
-    ): Call<com.example.chatbot.placesSearch.PlacesSearch>
 
     @Headers("Accept-Encoding: identity")
     @GET("nearbysearch/json")
-    fun getPlaceSearch(
+    fun getPlaceSearchWithKeyword(
         @Query("location") location: String, // Ex: 25.0338,121.5646
-        @Query("radius") radius: String = "500", // Ex: 500 公尺
+        @Query("radius") radius: String = "1000", // Ex: 500 公尺
         @Query("keyword") keyword: String,
         @Query("type") type: String = "restaurant",
         @Query("key") key: String,
@@ -59,11 +50,11 @@ interface ApiService {
      */
     @Headers("Accept-Encoding: identity")
     @GET("nearbysearch/json")
-    fun getPlaceSearchWithKeyword(
+    fun getPlaceSearch(
         @Query("location") location: String, // Ex: 25.0338,121.5646
         @Query("radius") radius: Long = 1000L, // Ex: 1000 公尺
-        @Query("keyword") keyword: String,
         @Query("key") key: String,
+        @Query("keyword") keyword: String,
         @Query("language") language: String = "zh-TW"
     ): Call<com.example.chatbot.placesSearch.PlacesSearch>
 
