@@ -30,9 +30,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.chatbot.*
 import com.example.chatbot.databinding.ShopItemBinding
-import com.example.chatbot.placesDetails.PlacesDetails
 import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.android.synthetic.main.fragment_second.editText
 import kotlinx.android.synthetic.main.shop_item.*
 
 
@@ -100,6 +98,8 @@ class PlacesFragment : Fragment() {
             val name = mask[1]
             val photoReference = mask[2]
             binding.apply {
+                binding.tvPreview.visibility = View.VISIBLE
+                binding.imgPreview.visibility = View.VISIBLE
                 tvPreview.text = name
                 // 讀取Google Place圖片方法
                 if (photoReference.isNotEmpty())
@@ -113,6 +113,7 @@ class PlacesFragment : Fragment() {
     }
     private fun setListener() {
         binding.btn.setOnClickListener {
+            mMap.clear()
             findNearSearch()
         }
     }
@@ -133,12 +134,7 @@ class PlacesFragment : Fragment() {
                     res.results.forEach { result ->
                         CoroutineScope(Dispatchers.Main).launch {
                             val markerOption = MarkerOptions().apply {
-                                position(
-                                    LatLng(
-                                        result.geometry.location.lat,
-                                        result.geometry.location.lng
-                                    )
-                                )//取得經緯度
+                                position(LatLng(result.geometry.location.lat, result.geometry.location.lng))//取得經緯度
                                 title(result.name)//取得店家名稱
                                 snippet("${result.place_id},${result.name},${result.photos[0].photo_reference}")
                             }

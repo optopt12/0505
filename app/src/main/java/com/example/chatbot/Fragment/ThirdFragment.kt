@@ -50,7 +50,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private lateinit var photoref: String
 
     //Google Detail search
-    private lateinit var name: String
+    private var name: String = ""
     companion object {
         private const val TAG = "ThirdFragment"
 //        private const val DEFAULT_ZOOM = 18F
@@ -112,15 +112,14 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     }
 
     private fun SearchShop() {
-        val search = binding.editText.text.toString()
         binding.button.setOnClickListener()
         {
-
-            Apiclient.googlePlaces.getPlaceSearch(
+            var keyword = binding.editText.text.toString()
+            Apiclient.googlePlaces.getPlaceSearchWithKeyword(
                 location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
-                radius = "500",
+                radius = 500,
                 language = "zh-TW",
-                keyword = search,
+                keyword = keyword,
                 key = BuildConfig.GOOGLE_API_KEY
             ).enqueue(object : Callback<PlacesSearch> {
                 override fun onResponse(
@@ -181,6 +180,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 var Detailimage: String = " "
                 var address :String = ""
                 var phonenumber :String = ""
+                var name :String = ""
                 //Google places search 評論
 
                  var author_name: MutableList<String> = ArrayList()
@@ -215,7 +215,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                             "&key=" + BuildConfig.GOOGLE_API_KEY
                     photoList.add(Detailimage)
                 }
-                rv(image, photoList, author_name, user_language, profile_photo_url,text,address,phonenumber)
+                rv(image, photoList, author_name, user_language, profile_photo_url,text,address,phonenumber,name)
                 Log.e("msglist", "${msglist.size}")
             }
 
@@ -237,7 +237,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         profile_photo_url: MutableList<String> = ArrayList(),
         text: MutableList<String> = ArrayList(),
         address : String,
-        phonenumber : String
+        phonenumber : String,
+        name:String
     ) {
         msglist.add(
             data(
