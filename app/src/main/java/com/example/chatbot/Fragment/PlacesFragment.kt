@@ -1,11 +1,13 @@
 package com.example.chatbot.Fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import coil.load
@@ -29,6 +31,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.chatbot.*
+import com.example.chatbot.Method.hideKeyboard
 import com.example.chatbot.databinding.ShopItemBinding
 import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.shop_item.*
@@ -115,6 +118,7 @@ class PlacesFragment : Fragment() {
         binding.btn.setOnClickListener {
             mMap.clear()
             findNearSearch()
+            binding.editText.hideKeyboard()
         }
     }
     private fun findNearSearch() {
@@ -169,6 +173,9 @@ class PlacesFragment : Fragment() {
             ActivityCompat.requestPermissions(requireActivity(), strings, 1)
         }
     }
+
+
+
 }
 
 

@@ -1,11 +1,13 @@
 package com.example.chatbot.Fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -14,6 +16,7 @@ import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Adapter.RestaurantListAdapter
 import com.example.chatbot.BuildConfig
 import com.example.chatbot.Method
+import com.example.chatbot.Method.hideKeyboard
 import com.example.chatbot.Network.Apiclient
 import com.example.chatbot.R
 import com.example.chatbot.databinding.FragmentFirstBinding
@@ -114,6 +117,7 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private fun SearchShop() {
         binding.button.setOnClickListener()
         {
+            binding.editText.hideKeyboard()
             if(binding.rv.childCount > 0){//清除rv裡面的所有內容
                 msglist.clear()
                 nestedDataList.clear()
@@ -260,7 +264,10 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 profile_photo_url = profile_photo_url
             )
         )
+        Log.d("msglist", "${msglist.toString()}")
         RAdapter.notifyDataSetChanged()
     }
+
+
 }
 
