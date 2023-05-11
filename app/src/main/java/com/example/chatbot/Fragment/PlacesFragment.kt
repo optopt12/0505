@@ -1,13 +1,12 @@
 package com.example.chatbot.Fragment
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import coil.load
@@ -117,12 +116,19 @@ class PlacesFragment : Fragment() {
     private fun setListener() {
         binding.btn.setOnClickListener {
             mMap.clear()
-            findNearSearch()
-            binding.editText.hideKeyboard()
+            var keyword = binding.editText.text.toString()
+            if (keyword != "")
+            {
+                findNearSearch(keyword)
+                binding.editText.hideKeyboard()
+            }
+            else
+            {
+                Toast.makeText(requireContext(), "請輸入要查詢的資訊", Toast.LENGTH_SHORT).show()
+            }
         }
     }
-    private fun findNearSearch() {
-        var keyword = binding.editText.text.toString()
+    private fun findNearSearch(keyword:String) {
         Apiclient.googlePlaces.getPlaceSearchWithKeyword(
             location = "${DEFAULT_LATITUDE},${DEFAULT_LONGITUDE}",
             radius = 500,
@@ -173,9 +179,6 @@ class PlacesFragment : Fragment() {
             ActivityCompat.requestPermissions(requireActivity(), strings, 1)
         }
     }
-
-
-
 }
 
 

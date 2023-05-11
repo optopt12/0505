@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -53,7 +54,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private lateinit var photoref: String
 
     //Google Detail search
-    private var name: String = ""
     companion object {
         private const val TAG = "ThirdFragment"
 //        private const val DEFAULT_ZOOM = 18F
@@ -115,63 +115,71 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     }
 
     private fun SearchShop() {
-        binding.button.setOnClickListener()
-        {
-            binding.editText.hideKeyboard()
-            if(binding.rv.childCount > 0){//清除rv裡面的所有內容
-                msglist.clear()
-                nestedDataList.clear()
-                photorefArray.clear()
-                placeidArray.clear()
-                binding.rv.removeAllViews()
-            }
-            var keyword = binding.editText.text.toString()
-            Apiclient.googlePlaces.getPlaceSearchWithKeyword(
-                location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
-                radius = 500,
-                language = "zh-TW",
-                keyword = keyword,
-                key = BuildConfig.GOOGLE_API_KEY
-            ).enqueue(object : Callback<PlacesSearch> {
-                override fun onResponse(
-                    call: Call<PlacesSearch>,
-                    response: Response<PlacesSearch>
-                ) {
-                    response.body()?.let { res ->
-                        res.results.forEach { result ->
-                            placeid = result.place_id
-                            name = result.name
-                            placeidArray.add(placeid)
-                            result.photos.forEach { photo ->
-                                photorefArray.add(photo.photo_reference)
+        var keyword = binding.editText.text.toString()
+            binding.button.setOnClickListener()
+            {
+                if (keyword != "") {
+                    if (binding.rv.childCount > 0) {//清除rv裡面的所有內容
+                    msglist.clear()
+                    nestedDataList.clear()
+                    photorefArray.clear()
+                    placeidArray.clear()
+                    binding.rv.removeAllViews()
+                }
+                    binding.editText.hideKeyboard()
+
+                    var keyword = binding.editText.text.toString()
+                Apiclient.googlePlaces.getPlaceSearchWithKeyword(
+                    location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
+                    radius = 500,
+                    language = "zh-TW",
+                    keyword = keyword,
+                    key = BuildConfig.GOOGLE_API_KEY
+                ).enqueue(object : Callback<PlacesSearch> {
+                    override fun onResponse(
+                        call: Call<PlacesSearch>,
+                        response: Response<PlacesSearch>
+                    ) {
+                        response.body()?.let { res ->
+                            res.results.forEach { result ->
+                                placeid = result.place_id
+                                placeidArray.add(placeid)
+                                result.photos.forEach { photo ->
+                                    photorefArray.add(photo.photo_reference)
+                                }
                             }
                         }
+                        for (i in 0..photorefArray.size - 1) {
+                            photoref = photorefArray[i]
+                            image = "https://maps.googleapis.com/maps/api/place/photo" +
+                                    "?maxwidth=4000" +
+                                    "&maxheight=4000" +
+                                    "&photo_reference=" + photoref +
+                                    "&key=" + BuildConfig.GOOGLE_API_KEY
+                            nestedDataList.add(NestedData(image))
+                        }
+                        for (i in 0..placeidArray.size - 1) {
+                            placeid = placeidArray[i]
+                            image = nestedDataList[i].imageUrl
+                            DetailSearch(placeid, image)
+                        }
                     }
-                    for (i in 0..photorefArray.size - 1) {
-                        photoref = photorefArray[i]
-                        image = "https://maps.googleapis.com/maps/api/place/photo" +
-                                "?maxwidth=4000" +
-                                "&maxheight=4000" +
-                                "&photo_reference=" + photoref +
-                                "&key=" + BuildConfig.GOOGLE_API_KEY
-                        nestedDataList.add(NestedData(image))
-                    }
-                    for (i in 0..placeidArray.size - 1) {
-                        placeid = placeidArray[i]
-                        image = nestedDataList[i].imageUrl
-                        DetailSearch(placeid, image)
-                    }
-                }
 
-                override fun onFailure(
-                    call: Call<PlacesSearch>,
-                    t: Throwable
-                ) {
-                    t.printStackTrace()
-                    Method.logE(TAG, "onFailure: ${t.message}")
+                    override fun onFailure(
+                        call: Call<PlacesSearch>,
+                        t: Throwable
+                    ) {
+                        t.printStackTrace()
+                        Method.logE(TAG, "onFailure: ${t.message}")
+                    }
+                }) }
+                else
+                {
+                    Toast.makeText(requireContext(), "請輸入要查詢的資訊", Toast.LENGTH_SHORT).show()
                 }
-            })
-        }
+            }
+
+
     }
 
     private fun DetailSearch(placeid: String, image: String) {
@@ -227,7 +235,6 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                     photoList.add(Detailimage)
                 }
                 rv(image, photoList, author_name, user_language, profile_photo_url,text,address,phonenumber,name)
-                Log.e("msglist", "${msglist.size}")
             }
 
             override fun onFailure(
@@ -264,10 +271,8 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 profile_photo_url = profile_photo_url
             )
         )
-        Log.d("msglist", "${msglist.toString()}")
+        Log.e("msglist", "${msglist}")
         RAdapter.notifyDataSetChanged()
     }
-
-
 }
 

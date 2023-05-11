@@ -2,7 +2,6 @@ package com.example.chatbot.Fragment
 
 import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatbot.databinding.FragmentFirstBinding
 import kotlinx.android.synthetic.main.fragment_first.*
@@ -22,18 +20,12 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.chatbot.Adapter.MsgAdapter
-import com.example.chatbot.Adapter.NestedData
 import com.example.chatbot.Method
 import com.example.chatbot.Method.hideKeyboard
 import com.example.chatbot.OpenAI.Msg
-import com.example.chatbot.databinding.MapShopBinding
 import com.example.chatbot.databinding.ShopItemBinding
 import com.example.chatbot.placesDetails.data
-import com.example.chatbot.placesDetails.detaildata
-import com.google.android.material.internal.ViewUtils.hideKeyboard
-import kotlinx.android.synthetic.main.shop_item.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -339,6 +331,10 @@ class OpenAIFragment : Fragment() {
                             Method.logE(TAG, "onFailure: ${t.message}")
                         }
                     })
+            }
+            else
+            {
+                Toast.makeText(requireContext(), "請輸入要對話的內容", Toast.LENGTH_SHORT).show()
             }
 
         }
