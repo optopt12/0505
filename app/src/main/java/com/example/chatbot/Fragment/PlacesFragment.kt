@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -100,8 +101,11 @@ class PlacesFragment : Fragment() {
             val name = mask[1]
             val photoReference = mask[2]
             binding.apply {
+
                 binding.tvPreview.visibility = View.VISIBLE
-                binding.imgPreview.visibility = View.VISIBLE
+//                binding.imgPreview.visibility = View.VISIBLE
+                binding.frameLayout.visibility = View.VISIBLE
+
                 tvPreview.text = name
                 // 讀取Google Place圖片方法
                 if (photoReference.isNotEmpty())
