@@ -186,6 +186,8 @@ class PlacesFragment : Fragment() {
 }
 
 
+//todo 點擊圖片後跳轉到餐廳資訊，具體之後說
+
 
 
 
