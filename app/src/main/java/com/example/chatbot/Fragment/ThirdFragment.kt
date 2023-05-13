@@ -31,6 +31,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private var name: String? = null
 
 class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickListener {
     //binding
@@ -53,12 +54,24 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     private lateinit var image: String
     private lateinit var photoref: String
 
+
     //Google Detail search
     companion object {
         private const val TAG = "ThirdFragment"
-//        private const val DEFAULT_ZOOM = 18F
+
+        //        private const val DEFAULT_ZOOM = 18F
         private const val DEFAULT_LATITUDE = 25.043871531367014
         private const val DEFAULT_LONGITUDE = 121.53453374432904
+    }
+
+    override fun setArguments(args: Bundle?) {
+        super.setArguments(args)
+        arguments?.let {
+            var argname = it.getString("name")
+            name = argname
+            // 根據需要進行相應的操作
+            Log.d("name", name.toString())
+        }
     }
 
 
@@ -80,6 +93,22 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         super.onViewCreated(view, savedInstanceState)
         initRv() //RecyclerView初始化
         SearchShop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("rename", name.toString())
+        Log.d("onResume", "onResume")
+
+        if(name!=null){
+            binding.editText.setText(name)
+            SearchShopNest()        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("onPause", "onPause")
+        name = null
     }
 
     //...
@@ -115,71 +144,72 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
     }
 
     private fun SearchShop() {
-            binding.button.setOnClickListener()
-            {
-                var keyword = binding.editText.text.toString()
-                if (keyword != "") {
-                    if (binding.rv.childCount > 0) {//清除rv裡面的所有內容
-                    msglist.clear()
-                    nestedDataList.clear()
-                    photorefArray.clear()
-                    placeidArray.clear()
-                    binding.rv.removeAllViews()
-                }
-                    binding.editText.hideKeyboard()
-                Apiclient.googlePlaces.getPlaceSearchWithKeyword(
-                    location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
-                    radius = 500,
-                    language = "zh-TW",
-                    keyword = keyword,
-                    key = BuildConfig.GOOGLE_API_KEY
-                ).enqueue(object : Callback<PlacesSearch> {
-                    override fun onResponse(
-                        call: Call<PlacesSearch>,
-                        response: Response<PlacesSearch>
-                    ) {
-                        response.body()?.let { res ->
-                            res.results.forEach { result ->
-                                placeid = result.place_id
-                                placeidArray.add(placeid)
-                                result.photos.forEach { photo ->
-                                    photorefArray.add(photo.photo_reference)
-                                }
-                            }
-                        }
-                        for (i in 0..photorefArray.size - 1) {
-                            photoref = photorefArray[i]
-                            image = "https://maps.googleapis.com/maps/api/place/photo" +
-                                    "?maxwidth=4000" +
-                                    "&maxheight=4000" +
-                                    "&photo_reference=" + photoref +
-                                    "&key=" + BuildConfig.GOOGLE_API_KEY
-                            nestedDataList.add(NestedData(image))
-                        }
-                        for (i in 0..placeidArray.size - 1) {
-                            placeid = placeidArray[i]
-                            image = nestedDataList[i].imageUrl
-                            DetailSearch(placeid, image)
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<PlacesSearch>,
-                        t: Throwable
-                    ) {
-                        t.printStackTrace()
-                        Method.logE(TAG, "onFailure: ${t.message}")
-                    }
-                })
-                }
-                else
-                {
-                    Toast.makeText(requireContext(), "請輸入要查詢的資訊", Toast.LENGTH_SHORT).show()
-                }
-            }
+        binding.button.setOnClickListener()
+        {
+           SearchShopNest()
+        }
 
 
     }
+
+    private fun SearchShopNest() {
+        var keyword = binding.editText.text.toString()
+        if (keyword != "") {
+            if (binding.rv.childCount > 0) {//清除rv裡面的所有內容
+                msglist.clear()
+                nestedDataList.clear()
+                photorefArray.clear()
+                placeidArray.clear()
+                binding.rv.removeAllViews()
+            }
+            binding.editText.hideKeyboard()
+            Apiclient.googlePlaces.getPlaceSearchWithKeyword(
+                location = "$DEFAULT_LATITUDE,$DEFAULT_LONGITUDE",
+                radius = 500,
+                language = "zh-TW",
+                keyword = keyword,
+                key = BuildConfig.GOOGLE_API_KEY
+            ).enqueue(object : Callback<PlacesSearch> {
+                override fun onResponse(
+                    call: Call<PlacesSearch>,
+                    response: Response<PlacesSearch>
+                ) {
+                    response.body()?.let { res ->
+                        res.results.forEach { result ->
+                            placeid = result.place_id
+                            placeidArray.add(placeid)
+                            result.photos.forEach { photo ->
+                                photorefArray.add(photo.photo_reference)
+                            }
+                        }
+                    }
+                    for (i in 0..photorefArray.size - 1) {
+                        photoref = photorefArray[i]
+                        image = "https://maps.googleapis.com/maps/api/place/photo" +
+                                "?maxwidth=4000" +
+                                "&maxheight=4000" +
+                                "&photo_reference=" + photoref +
+                                "&key=" + BuildConfig.GOOGLE_API_KEY
+                        nestedDataList.add(NestedData(image))
+                    }
+                    for (i in 0..placeidArray.size - 1) {
+                        placeid = placeidArray[i]
+                        image = nestedDataList[i].imageUrl
+                        DetailSearch(placeid, image)
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<PlacesSearch>,
+                    t: Throwable
+                ) {
+                    t.printStackTrace()
+                    Method.logE(TAG, "onFailure: ${t.message}")
+                }
+            })
+        } else {
+            Toast.makeText(requireContext(), "請輸入要查詢的資訊", Toast.LENGTH_SHORT).show()
+        }    }
 
     private fun DetailSearch(placeid: String, image: String) {
         Apiclient.googlePlaces.getPlaceDetails(
@@ -196,18 +226,18 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                 var DetailphotorefArray: MutableList<String> = ArrayList()
                 var Detailphotoref: String = " "
                 var Detailimage: String = " "
-                var address :String = ""
-                var phonenumber :String = ""
-                var name :String = ""
+                var address: String = ""
+                var phonenumber: String = ""
+                var name: String = ""
                 //Google places search 評論
 
-                 var author_name: MutableList<String> = ArrayList()
-                 var user_language: MutableList<String> = ArrayList()
-                 var profile_photo_url: MutableList<String> = ArrayList()
-                 var text: MutableList<String> = ArrayList()
+                var author_name: MutableList<String> = ArrayList()
+                var user_language: MutableList<String> = ArrayList()
+                var profile_photo_url: MutableList<String> = ArrayList()
+                var text: MutableList<String> = ArrayList()
 
-                    DetailphotorefArray.clear()
-                    photoList.clear()
+                DetailphotorefArray.clear()
+                photoList.clear()
 
                 response.body()?.let { res ->
                     address = res.result.formatted_address ?: ""
@@ -233,7 +263,17 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
                             "&key=" + BuildConfig.GOOGLE_API_KEY
                     photoList.add(Detailimage)
                 }
-                rv(image, photoList, author_name, user_language, profile_photo_url,text,address,phonenumber,name)
+                rv(
+                    image,
+                    photoList,
+                    author_name,
+                    user_language,
+                    profile_photo_url,
+                    text,
+                    address,
+                    phonenumber,
+                    name
+                )
             }
 
             override fun onFailure(
@@ -253,9 +293,9 @@ class ThirdFragment : Fragment(), RestaurantListAdapter.OnCommentButtonClickList
         user_language: MutableList<String> = ArrayList(),
         profile_photo_url: MutableList<String> = ArrayList(),
         text: MutableList<String> = ArrayList(),
-        address : String,
-        phonenumber : String,
-        name : String
+        address: String,
+        phonenumber: String,
+        name: String
     ) {
         msglist.add(
             data(
